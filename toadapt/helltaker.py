@@ -1,8 +1,6 @@
 from collections import namedtuple
 from pprint import *
-from traceback import print_tb
 
-from attr import frozen
 
 
 State = namedtuple('state', ('pusher','boxes','skeletons','chests','keys','hasKey','nbMove'))
@@ -16,7 +14,7 @@ def mapReader(filename, debug = False):
     if debug:
         print(data)
     
-    nb_allowed_move = 24 #To read in file 
+    nb_allowed_move = 23 #To read in file 
     walls = []    #Walls
     targets = []  #Waifu targets
     pusher = ()   #Initial position of the pusher
@@ -200,7 +198,7 @@ def search_with_parent(s0, goals, succ, remove, insert, debug=False) :
                 insert(s2, l)
     return None, save
 
-s0, map_rules, free, goals, succ, trapped, on_waifu, on_evenTrap, on_oddTrap = mapReader("HTmaps/lvl2bis.txt")
+s0, map_rules, free, goals, succ, trapped, on_waifu, on_evenTrap, on_oddTrap = mapReader("HTmaps/lvl5.txt")
 
 print(map_rules)
 
