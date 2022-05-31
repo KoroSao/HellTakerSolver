@@ -1,5 +1,6 @@
 from collections import namedtuple
 from pprint import *
+from traceback import print_tb
 
 from attr import frozen
 
@@ -15,7 +16,7 @@ def mapReader(filename, debug = False):
     if debug:
         print(data)
     
-    nb_allowed_move = 32 #To read in file 
+    nb_allowed_move = 24 #To read in file 
     walls = []    #Walls
     targets = []  #Waifu targets
     pusher = ()   #Initial position of the pusher
@@ -91,8 +92,8 @@ def mapReader(filename, debug = False):
         return state.pusher in MR.goals and state.nbMove >= 0
     
     def succ(state) :
-        l = [(do_fn(actions[a],state),a) for a in actions]
-        return {x : a for x,a in l if x}
+        l = [(do_fn(a,state),a) for a in actions.values()]
+        return  {x : a for x,a in l if x}
 
     return s0, MR, free, goals, succ, trapped, on_waifu, on_evenTrap, on_oddTrap
 
@@ -131,7 +132,7 @@ def do_fn(direction, state) :
 
         else:
             if free(X2) and not (X2 in boxes) and not (X2 in chests):
-                if (on_evenTrap(X2) and state.nbMove%2!=0) or (on_oddTrap(X2) and state.nbMove%2==0):
+                if (on_evenTrap(X2) and state.nbMove%2==0) or (on_oddTrap(X2) and state.nbMove%2!=0):
                     return State(X0, frozenset(boxes), frozenset(skeletons - {X1}),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty)
                 else:
                     return State(X0, frozenset(boxes), frozenset({X2} | skeletons - {X1}),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty)
@@ -147,8 +148,12 @@ def do_fn(direction, state) :
         return State(X1, frozenset(boxes), frozenset(skeletons),frozenset(state.chests - {X1}),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty)
 
 
-    else:
+    elif free(X1):
         return State(X0, frozenset(boxes),frozenset(skeletons),frozenset(state.chests),frozenset(state.keys),state.hasKey, state.nbMove-1-penalty)
+    else:
+        return None
+
+
 
 
 
@@ -195,7 +200,7 @@ def search_with_parent(s0, goals, succ, remove, insert, debug=False) :
                 insert(s2, l)
     return None, save
 
-s0, map_rules, free, goals, succ, trapped, on_waifu, on_evenTrap, on_oddTrap = mapReader("lvl7.txt")
+s0, map_rules, free, goals, succ, trapped, on_waifu, on_evenTrap, on_oddTrap = mapReader("HTmaps/lvl2bis.txt")
 
 print(map_rules)
 
