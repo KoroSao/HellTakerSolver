@@ -96,18 +96,18 @@ def monsuperplanificateur(infos):
                         oddTraps.append((i,j))
                     else:
                         evenTraps.append((i,j))
-                # elif case == "P":
-                #     boxes.append((i,j))
-                #     if max_steps %2 == 0:
-                #         oddTraps.append((i,j))
-                #     else:
-                #         evenTraps.append((i,j))
-                # elif case == "Q":
-                #     boxes.append((i,j))
-                #     if max_steps %2 != 0:
-                #         oddTraps.append((i,j))
-                #     else:
-                #         evenTraps.append((i,j))
+                elif case == "P":
+                    boxes.append((i,j))
+                    if max_steps %2 == 0:
+                        oddTraps.append((i,j))
+                    else:
+                        evenTraps.append((i,j))
+                elif case == "Q":
+                    boxes.append((i,j))
+                    if max_steps %2 != 0:
+                        oddTraps.append((i,j))
+                    else:
+                        evenTraps.append((i,j))
 
         s0 = State( pusher, frozenset(boxes), frozenset(skeletons),frozenset(chest),frozenset(key), False, nb_allowed_move)
         
@@ -221,7 +221,7 @@ def main():
 
     # récupération de la grille et de toutes les infos
     infos = grid_from_file(filename)
-    #print(infos['grid'])
+    print(infos['grid'])
 
     # calcul du plan
     plan = monsuperplanificateur(infos)
