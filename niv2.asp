@@ -686,6 +686,22 @@ fluent(coups_restants(D - 2), T + 1) :-
 	spike(X,Y),
 	fluent(coups_restants(D), T).
 
+fluent(coups_restants(D - 2), T + 1) :-
+	do(T, A),
+	A != nop,
+	fluent(me(X,Y), T+1),
+	evenTrap(X,Y),
+	fluent(coups_restants(D), T),
+    D mod 2  = 0.
+
+fluent(coups_restants(D - 2), T + 1) :-
+	do(T, A),
+	A != nop,
+	fluent(me(X,Y), T+1),
+	evenTrap(X,Y),
+	fluent(coups_restants(D), T),
+    D mod 2 \= 0.
+
 removed(me(X, Y), T) :- 
     do(T, _),
     fluent(me(X,Y), T).
