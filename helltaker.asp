@@ -19,7 +19,18 @@ wall(7,0).
 wall(7,7..8).
 wall(8,0..8).
 
-spike(5,2).
+%spike(5,2).
+
+%------------------- INITIALISATIONS -------------------
+fluent(me(2,6), 0).
+fluent(coups_restants(horizon), 0).
+fluent(box(6,2), 0).
+fluent(box(7,2), 0).
+fluent(box(7,4), 0).
+fluent(box(6,5), 0).
+fluent(skeleton(3,4),0).
+fluent(skeleton(4,3),0).
+fluent(skeleton(4,5),0).
 
 %------------------- ACTIONS -------------------
 %------------------- Niveau 1 -------------------
@@ -32,16 +43,6 @@ action(push_haut_s;push_bas_s;push_gauche_s;push_droite_s).
 %
 action(nop).
 
-%------------------- INITIALISATIONS -------------------
-fluent(me(2,6), 0).
-fluent(coups_restants(horizon), 0).
-fluent(box(6,2), 0).
-fluent(box(7,2), 0).
-fluent(box(7,4), 0).
-fluent(box(6,5), 0).
-fluent(skeleton(3,4),0).
-fluent(skeleton(4,3),0).
-fluent(skeleton(4,5),0).
 
 %------------------- Buts -------------------
 goal(me(7,6)).
@@ -297,7 +298,7 @@ removed(skeleton(X - 1, Y), T) :-
 %préconditions
 :- do(T,push_bas_s),
     fluent(me(X, Y), T),
-    not fluent(skeleton(X - 1, Y), T).
+    not fluent(skeleton(X + 1, Y), T).
 
 %effets
 fluent(me(X, Y), T + 1) :- 
@@ -364,14 +365,16 @@ removed(skeleton(X, Y+1), T) :-
 %%%
 
 fluent(coups_restants(D -1), T + 1) :-
-	do(T, _),
-	fluent(me(X, Y), T),
+	do(T, A),
+	A != nop,
+	fluent(me(X, Y), T+1),
 	not spike(X, Y),
 	fluent(coups_restants(D), T).
 
 fluent(coups_restants(D - 2), T + 1) :-
-	do(T, _),
-	fluent(me(X,Y), T),
+	do(T, A),
+	A != nop,
+	fluent(me(X,Y), T+1),
 	spike(X,Y),
 	fluent(coups_restants(D), T).
 
@@ -395,3 +398,4 @@ fluent(F, T+1) :-
 
 #show do/2.
 %#show fluent/2.
+%#show achieved/1.
