@@ -61,7 +61,7 @@ def ASP_results(pb, nb_coups):
 
   return glob
 
-def map_reader(grid):
+def map_reader(grid, nb_coups):
     asp_enc = ""
 
     for i in range(len(grid)):
@@ -84,20 +84,33 @@ def map_reader(grid):
                 asp_enc = "\n".join([asp_enc, f"fluent(key({i}, {j}),0)."])
             if grid[i][j] == 'L':
                 asp_enc = "\n".join([asp_enc, f"fluent(lock({i}, {j}),0)."])
-
             if grid[i][j] == 'S':
                 asp_enc = "\n".join([asp_enc, f"spike({i}, {j})."])
-            # if grid[i][j] == 'T':
-            #     asp_enc = "\n".join([asp_enc, f"me({i}, {j})"])
-            # if grid[i][j] == 'U':
-            #     asp_enc = "\n".join([asp_enc, f"me({i}, {j})"])
+            if grid[i][j] == 'T':
+                if (nb_coups %2) == 0:
+                    asp_enc = "\n".join([asp_enc, f"oddTrap({i}, {j})."])
+                else:
+                    asp_enc = "\n".join([asp_enc, f"evenTrap({i}, {j})."])
+            if grid[i][j] == 'U':
+                if (nb_coups %2) != 0:
+                    asp_enc = "\n".join([asp_enc, f"oddTrap({i}, {j})."])
+                else:
+                    asp_enc = "\n".join([asp_enc, f"evenTrap({i}, {j})."])
             if grid[i][j] == 'O':
                 asp_enc = "\n".join([asp_enc, f"spike({i}, {j})."])
                 asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
-            # if grid[i][j] == 'P':
-            #     asp_enc = "\n".join([asp_enc, f"me({i}, {j})"])
-            # if grid[i][j] == 'Q':
-            #     asp_enc = "\n".join([asp_enc, f"me({i}, {j})"])
+            if grid[i][j] == 'P':
+                asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
+                if nb_coups %2 == 0:
+                    asp_enc = "\n".join([asp_enc, f"oddTrap({i}, {j})."])
+                else:
+                    asp_enc = "\n".join([asp_enc, f"evenTrap({i}, {j})."])
+            if grid[i][j] == 'Q':
+                asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
+                if nb_coups %2 != 0:
+                    asp_enc = "\n".join([asp_enc, f"oddTrap({i}, {j})."])
+                else:
+                    asp_enc = "\n".join([asp_enc, f"evenTrap({i}, {j})."])
 
     return asp_enc
 
@@ -594,7 +607,7 @@ fluent(F, T+1) :-
 if __name__ == "__main__":
     dic = test()
     #print(map_reader(dic['grid']))
-    pb = creating_pb(map_reader(dic['grid']), dic['max_steps'], dic['n'])
+    pb = creating_pb(map_reader(dic['grid'], dic['max_steps']), dic['max_steps'], dic['n'])
     print(pb)
     print(dic['max_steps'])
     print(ASP_results(pb, dic['max_steps']))
