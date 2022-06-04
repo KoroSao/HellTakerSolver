@@ -2,7 +2,7 @@
 nombre(0..n).
 etape(0..horizon-1).
 
-
+%------------------- MURS -------------------
 wall(0,0..8).
 wall(1,0..8).
 wall(2,0..4).
@@ -19,10 +19,22 @@ wall(7,0).
 wall(7,7..8).
 wall(8,0..8).
 
-action(bas;haut;gauche;droite;push_haut;push_bas;push_gauche;push_droite;push_haut_s;push_bas_s;push_gauche_s;push_droite_s).
+spike(5,2).
+
+%------------------- ACTIONS -------------------
+%------------------- Niveau 1 -------------------
+
+%------------------- Se deplacer -------------------
+action(bas;haut;gauche;droite).
+
+%------------------- Pousser une caisse -------------------
+action(push_haut;push_bas;push_gauche;push_droite).
+
+%------------------- Pousser une squelette -------------------
+action(push_haut_s;push_bas_s;push_gauche_s;push_droite_s).
 
 
-%initalisation
+%------------------- INITIALISATIONS -------------------
 fluent(me(2,6),0).
 fluent(box(6,2), 0).
 fluent(box(7,2), 0).
@@ -32,12 +44,12 @@ fluent(skeleton(3,4),0).
 fluent(skeleton(4,3),0).
 fluent(skeleton(4,5),0).
 
-%Buts.
+%------------------- Buts -------------------
 goal(me(7,6)).
 
 
 
-%Test sur les buts
+%------------------- Test sur les buts -------------------
 
 :- goal(F), not fluent(F,horizon).
 
@@ -47,8 +59,10 @@ goal(me(7,6)).
 
 
 % ------------------- MOVE -------------------
-%préconditions
 
+%------------------- HAUT -------------------
+
+%préconditions
 :- do(T,haut),
     fluent(me(X, Y), T), 
     fluent(box(X - 1, Y), T).
@@ -63,12 +77,20 @@ goal(me(7,6)).
 
 %effets
 fluent(me(X - 1, Y), T + 1) :- 
+    not spike(X - 1, Y),
+    do(T, haut), 
+    fluent(me(X, Y), T).
+
+fluent(me(X - 1, Y), T + 2) :- 
+    spike(X - 1, Y),
     do(T, haut), 
     fluent(me(X, Y), T).
 
 removed(me(X, Y), T) :- 
     do(T, haut),
     fluent(me(X,Y), T).
+
+%------------------- BAS -------------------
 
 %préconditions
 :- do(T,bas),
@@ -93,6 +115,7 @@ removed(me(X, Y), T) :-
     do(T, bas),
     fluent(me(X,Y), T).
 
+%------------------- GAUCHE -------------------
 
 %préconditions
 :- do(T,gauche),
@@ -116,9 +139,9 @@ removed(me(X, Y), T) :-
     do(T, gauche),
     fluent(me(X,Y), T).
 
+%------------------- DROITE -------------------
 
 %préconditions
-
 :- do(T, droite),
     fluent(me(X,Y), T),
     wall(X, Y + 1).
@@ -141,6 +164,8 @@ removed(me(X, Y), T) :-
     fluent(me(X, Y), T).
 
 % ------------------- PUSH BOX -------------------
+
+%------------------- HAUT -------------------
 
 %préconditions
 :- do(T,push_haut),
@@ -177,6 +202,8 @@ removed(me(X, Y), T) :-
     do(T,push_haut),
     fluent(me(X, Y), T).
 
+%------------------- BAS -------------------
+
 %préconditions
 :- do(T,push_bas),
     fluent(me(X, Y), T),
@@ -212,10 +239,9 @@ removed(me(X, Y), T) :-
     do(T,push_bas),
     fluent(me(X, Y), T).
 
-
+%------------------- GAUCHE -------------------
 
 %préconditions
-
 :- do(T, push_gauche),
     fluent(me(X, Y), T),
     not fluent(box(X, Y - 1), T).
@@ -250,10 +276,9 @@ removed(box(X, Y - 1), T) :-
     do(T, push_gauche),
     fluent(me(X, Y), T).
 
-
+%------------------- DROITE -------------------
 
 %préconditions
-
 :- do(T,push_droite),
     fluent(me(X, Y), T),
     not fluent(box(X, Y + 1), T).
@@ -291,6 +316,8 @@ removed(me(X, Y), T) :-
 
 % ------------------- PUSH SKELETON -------------------
 
+%------------------- HAUT -------------------
+
 %préconditions
 :- do(T,push_haut_s),
     fluent(me(X, Y), T),
@@ -317,6 +344,7 @@ removed(me(X, Y), T) :-
     do(T,push_haut_s),
     fluent(me(X, Y), T).
 
+%------------------- BAS -------------------
 
 %préconditions
 :- do(T,push_bas_s),
@@ -343,6 +371,7 @@ removed(me(X, Y), T) :-
     do(T,push_bas_s),
     fluent(me(X, Y), T).
 
+%------------------- GAUCHE -------------------
 
 %préconditions
 :- do(T,push_gauche_s),
@@ -369,6 +398,7 @@ removed(me(X, Y), T) :-
     do(T,push_gauche_s),
     fluent(me(X, Y), T).
 
+%------------------- DROITE -------------------
 
 %préconditions
 :- do(T,push_droite_s),
@@ -396,7 +426,7 @@ removed(me(X, Y), T) :-
     fluent(me(X, Y), T).
 
 
-
+%------------------- RESULT -------------------
 
 fluent(F, T + 1) :-
     fluent(F, T),
