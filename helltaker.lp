@@ -152,6 +152,10 @@ removed(me(X, Y), T) :-
     wall(X - 2, Y).
 
 :- do(T, push_haut),
+    fluent(me(X,Y),T),
+    fluent(skeleton(X - 2, Y),T).
+
+:- do(T, push_haut),
     fluent(me(X,Y), T),
     fluent(box(X - 2, Y), T).
 
@@ -183,6 +187,10 @@ removed(me(X, Y), T) :-
     wall(X + 2, Y).
 
 :- do(T, push_bas),
+    fluent(me(X,Y),T),
+    fluent(skeleton(X + 2, Y),T).
+
+:- do(T, push_bas),
     fluent(me(X,Y), T),
     fluent(box(X + 2, Y), T).
 
@@ -210,24 +218,27 @@ removed(me(X, Y), T) :-
 
 :- do(T, push_gauche),
     fluent(me(X, Y), T),
-    not fluent(box(X, Y + 1), T).
+    not fluent(box(X, Y - 1), T).
 
 :- do(T, push_gauche),
     fluent(me(X, Y), T),
-    wall(X, Y + 2).
-    %not case(X, Y + 2).
+    wall(X, Y - 2).
 
 :- do(T, push_gauche),
     fluent(me(X, Y), T),
-    fluent(box(X, Y + 2), T).
+    fluent(skeleton(X, Y - 2),T).
+
+:- do(T, push_gauche),
+    fluent(me(X, Y), T),
+    fluent(box(X, Y - 2), T).
 
 %effets
 
-fluent(me(X, Y + 1), T + 1):-
+fluent(me(X, Y), T + 1):-
     do(T, push_gauche),
     fluent(me(X, Y), T).
 
-fluent(box(X, Y + 2), T + 1) :-
+fluent(box(X, Y - 2), T + 1) :-
     do(T, push_gauche),
     fluent(me(X, Y), T).
 
@@ -235,7 +246,7 @@ removed(me(X,Y),T) :-
     do(T, push_gauche),
     fluent(me(X, Y), T).
 
-removed(box(X, Y + 1), T) :-
+removed(box(X, Y - 1), T) :-
     do(T, push_gauche),
     fluent(me(X, Y), T).
 
@@ -245,28 +256,31 @@ removed(box(X, Y + 1), T) :-
 
 :- do(T,push_droite),
     fluent(me(X, Y), T),
-    not fluent(box(X, Y - 1), T).
+    not fluent(box(X, Y + 1), T).
 
 :- do(T, push_droite),
     fluent(me(X,Y),T),
-    wall(X, Y - 2).
-    %not case(X, Y - 2).
+    wall(X, Y + 2).
+
+:- do(T, push_droite),
+    fluent(me(X,Y),T),
+    fluent(skeleton(X, Y + 2),T).
 
 :- do(T, push_droite),
     fluent(me(X,Y), T),
-    fluent(box(X, Y - 2), T).
+    fluent(box(X, Y + 2), T).
 
 %effets
 
-fluent(me(X,Y - 1), T + 1) :- 
+fluent(me(X,Y), T + 1) :- 
     do(T,push_droite), 
     fluent(me(X,Y), T).
 
-fluent(box(X, Y - 2), T + 1) :-
+fluent(box(X, Y + 2), T + 1) :-
     do(T, push_droite),
     fluent(me(X, Y), T).
 
-removed(box(X, Y - 1), T) :-
+removed(box(X, Y + 1), T) :-
     do(T, push_droite),
     fluent(me(X, Y), T).
 
