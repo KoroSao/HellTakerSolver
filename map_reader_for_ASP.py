@@ -1,153 +1,224 @@
-% #const n = 8.
-% nombre(0..n).
-% etape(0..horizon-1).
+import clingo
 
-% wall(0, 2).
-% wall(0, 3).
-% wall(0, 4).
-% wall(0, 5).
-% wall(1, 1).
-% wall(1, 6).
-% wall(1, 7).
-% wall(2, 1).
-% fluent(skeleton(2, 2), 0).
-% wall(2, 3).
-% spike(2, 4).
-% spike(2, 5).
-% wall(2, 8).
-% wall(3, 0).
-% spike(3, 2).
-% wall(3, 3).
-% wall(3, 4).
-% spike(3, 5).
-% fluent(box(3, 5), 0).
-% spike(3, 6).
-% fluent(box(3, 6), 0).
-% fluent(box(3, 7), 0).
-% wall(3, 8).
-% wall(4, 0).
-% wall(4, 3).
-% wall(4, 4).
-% spike(4, 6).
-% wall(4, 8).
-% wall(5, 0).
-% fluent(me(5, 1), 0).
-% wall(5, 3).
-% wall(5, 4).
-% fluent(skeleton(5, 6), 0).
-% wall(5, 8).
-% wall(6, 0).
-% wall(6, 1).
-% wall(6, 2).
-% wall(6, 3).
-% wall(6, 4).
-% goal(me(5, 5)).
-% goal(me(7, 5)).
-% goal(me(6, 4)).
-% goal(me(6, 6)).
-% fluent(skeleton(6, 7), 0).
-% wall(6, 8).
-% wall(7, 0).
-% wall(7, 1).
-% wall(7, 2).
-% wall(7, 3).
-% wall(7, 4).
-% wall(7, 5).
-% wall(7, 6).
-% wall(7, 7).
-% wall(7, 8).
-% wall(6,5).
-% goal(me(7,6)).
+def ASP_results(pb, nb_coups):
+  # pb : ASP program to solve a unique level
+  # nb_coups : number of actions permitted by the game to solve the level
 
-#const n=10.
-etape(0..31).
-nombre(0..n).
+  #==========Launching ASP with the right parameter==========
+  hor = f"horizon={nb_coups}"
+  ctl = clingo.Control(["-c", hor, "-n0"])
+  ctl.add("base", [], pb)
+  ctl.ground([("base", [])])
+  ctl.configuration.solve.models="0"
 
-wall(0, 0).
-wall(0, 1).
-wall(0, 2).
-wall(0, 3).
-wall(0, 4).
-wall(0, 5).
-wall(0, 6).
-wall(0, 7).
-wall(0, 8).
-wall(0, 9).
-wall(1, 0).
-wall(1, 1).
-wall(1, 2).
-wall(1, 3).
-wall(1, 4).
-wall(1, 5).
-goal(me(1, 7)).
-wall(1, 6).
-wall(1, 8).
-wall(1, 9).
-wall(2, 0).
-wall(2, 1).
-wall(2, 2).
-wall(2, 3).
-wall(2, 4).
-wall(2, 5).
-wall(2, 6).
-fluent(lock(2, 7),0).
-wall(2, 8).
-wall(2, 9).
-wall(3, 0).
-wall(3, 1).
-wall(3, 2).
-spike(3, 4).
-spike(3, 5).
-fluent(me(3, 8), 0).
-wall(3, 9).
-wall(4, 0).
-wall(4, 1).
-wall(4, 2).
-spike(4, 3).
-wall(4, 4).
-spike(4, 5).
-wall(4, 6).
-wall(4, 9).
-wall(5, 0).
-wall(5, 1).
-wall(5, 2).
-fluent(skeleton(5, 5), 0).
-spike(5, 6).
-spike(5, 7).
-wall(5, 8).
-wall(5, 9).
-wall(6, 0).
-fluent(key(6, 1),0).
-wall(6, 2).
-spike(6, 3).
-wall(6, 4).
-spike(6, 5).
-wall(6, 6).
-wall(6, 8).
-wall(6, 9).
-wall(7, 0).
-fluent(skeleton(7, 6), 0).
-wall(7, 8).
-wall(7, 9).
-wall(8, 0).
-wall(8, 1).
-wall(8, 2).
-wall(8, 3).
-wall(8, 4).
-wall(8, 5).
-wall(8, 6).
-wall(8, 7).
-wall(8, 8).
-wall(8, 9).
+  #==========Getting all the models found by ASP==========
+  models = []
+  with ctl.solve(yield_=True) as handle:
+      for model in handle:
+          models.append(model.symbols(atoms=True))
+
+  #==========Getting the list of actions to solve the level==========
+  glob = []
+  for model in models:
+    l = []
+    for act in model:
+      if act.match("do", 2):
+        l.append(str(act).split(sep = "(")[1].split(sep = ')')[0].split(sep=","))
+    for i in range(len(l)):
+      l[i][0] = int(l[i][0])
+    l = sorted(l, key=lambda x: x[0])
 
 
+    #==========Transforming the actions into letters for evaluation==========
+    res = []
+    for i in range(len(l)):
+      if l[i][1] == 'push_droite':
+        res.append('d')
+      if l[i][1] == 'push_gauche':
+        res.append('g')
+      if l[i][1] == 'push_haut':
+        res.append('h')
+      if l[i][1] == 'push_bas':
+        res.append('b')
+      if l[i][1] == 'push_droite_s':
+        res.append('d')
+      if l[i][1] == 'push_gauche_s':
+        res.append('g')
+      if l[i][1] == 'push_haut_s':
+        res.append('h')
+      if l[i][1] == 'push_bas_s':
+        res.append('b')
+      if l[i][1] == 'droite':
+        res.append('d')
+      if l[i][1] == 'gauche':
+        res.append('g')
+      if l[i][1] == 'haut':
+        res.append('h')
+      if l[i][1] == 'bas':
+        res.append('b')
+
+    glob.append("".join(res))
+
+  return glob
+
+def map_reader(grid):
+    asp_enc = ""
+
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            if grid[i][j] == 'H':
+                asp_enc = "\n".join([asp_enc, f"fluent(me({i}, {j}), 0)."])
+            if grid[i][j] == 'D':
+                asp_enc = "\n".join([asp_enc, f"goal(me({i-1}, {j}))."])
+                asp_enc = "\n".join([asp_enc, f"goal(me({i+1}, {j}))."])
+                asp_enc = "\n".join([asp_enc, f"goal(me({i}, {j-1}))."])
+                asp_enc = "\n".join([asp_enc, f"goal(me({i}, {j+1}))."])
+                asp_enc = "\n".join([asp_enc, f"wall({i}, {j})."])
+            if grid[i][j] == '#':
+                asp_enc = "\n".join([asp_enc, f"wall({i}, {j})."])
+            if grid[i][j] == 'B':
+                asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
+            if grid[i][j] == 'M':
+                asp_enc = "\n".join([asp_enc, f"fluent(skeleton({i}, {j}), 0)."])
+            if grid[i][j] == 'K':
+                asp_enc = "\n".join([asp_enc, f"fluent(key({i}, {j}),0)."])
+            if grid[i][j] == 'L':
+                asp_enc = "\n".join([asp_enc, f"fluent(lock({i}, {j}),0)."])
+
+            if grid[i][j] == 'S':
+                asp_enc = "\n".join([asp_enc, f"spike({i}, {j})."])
+            # if grid[i][j] == 'T':
+            #     asp_enc = "\n".join([asp_enc, f"me({i}, {j})"])
+            # if grid[i][j] == 'U':
+            #     asp_enc = "\n".join([asp_enc, f"me({i}, {j})"])
+            if grid[i][j] == 'O':
+                asp_enc = "\n".join([asp_enc, f"spike({i}, {j})."])
+                asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
+            # if grid[i][j] == 'P':
+            #     asp_enc = "\n".join([asp_enc, f"me({i}, {j})"])
+            # if grid[i][j] == 'Q':
+            #     asp_enc = "\n".join([asp_enc, f"me({i}, {j})"])
+
+    return asp_enc
 
 
+"""
+Version: 1.1.1
+Auteur : Sylvain Lagrue <sylvain.lagrue@hds.utc.fr>
+
+Ce module contient différentes fonction permettant de lire des fichiers Helltaker au format défini pour le projet et de vérifier des plans.
+"""
+
+from fileinput import filename
+from pprint import pprint
+import sys
+from typing import List
 
 
+def complete(m: List[List[str]], n: int):
+    for l in m:
+        for _ in range(len(l), n):
+            l.append(" ")
+    return m
 
+
+def convert(grid: List[List[str]], voc: dict):
+    new_grid = []
+    for line in grid:
+        new_line = []
+        for char in line:
+            if char in voc:
+                new_line.append(voc[char])
+            else:
+                new_line.append(char)
+        new_grid.append(new_line)
+    return new_grid
+
+
+def grid_from_file(filename: str, voc: dict = {}):
+    """
+    Cette fonction lit un fichier et le convertit en une grille de Helltaker
+
+    Arguments:
+    - filename: fichier contenant la description de la grille
+    - voc: argument facultatif permettant de convertir chaque case de la grille en votre propre vocabulaire
+
+    Retour:
+    - un dictionnaire contenant:
+        - la grille de jeu sous une forme d'une liste de liste de (chaînes de) caractères
+        - le nombre de ligne m
+        - le nombre de colonnes n
+        - le titre de la grille
+        - le nombre maximal de coups max_steps
+    """
+
+    grid = []
+    m = 0  # nombre de lignes
+    n = 0  # nombre de colonnes
+    no = 0  # numéro de ligne du fichier
+    title = ""
+    max_steps = 0
+
+    with open(filename, "r", encoding="utf-8") as f:
+        for line in f:
+            no += 1
+
+            l = line.rstrip()
+
+            if no == 1:
+                title = l
+                continue
+            if no == 2:
+                max_steps = int(l)
+                continue
+
+            if len(l) > n:
+                n = len(l)
+                complete(grid, n)
+
+            if l != "":
+                grid.append(list(l))
+    if voc:
+        grid = convert(grid, voc)
+
+    m = len(grid)
+
+    return {"grid": grid, "title": title, "m": m, "n": n, "max_steps": max_steps}
+
+
+def check_plan(plan: str):
+    """
+    Cette fonction vérifie que votre plan est valide/
+
+    Argument: un plan sous forme de chaîne de caractères
+    Retour  : True si le plan est valide, False sinon
+    """
+    valid = "hbgd"
+    for c in plan:
+        if c not in valid:
+            return False
+    return True
+
+
+def test():
+    if len(sys.argv) != 2:
+        sys.exit(-1)
+
+    filename = sys.argv[1]
+
+    return grid_from_file(filename)
+
+
+def creating_pb(initialisation, nb_coups, largeur):
+    init = f"#const n={largeur}.\netape(0..{nb_coups-1}).\nnombre(0..n).\n"
+    p = (
+        init
+        + 
+        initialisation
+        +
+        """\n
 fluent(coups_restants(horizon), 0).
-fluent(has_key(0), 0).
+
 %------------------- ACTIONS -------------------
 %------------------- Niveau 1 -------------------
 %------------------- Se deplacer -------------------
@@ -189,50 +260,10 @@ achieved(T):- fluent(F,T), goal(F).
     fluent(me(X, Y), T),
     fluent(skeleton(X - 1, Y),T).
 
-:- do(T,haut),
-    fluent(me(X, Y), T),
-    fluent(lock (X - 1, Y), T),
-    fluent(has_key(0), T).
-
-
 %effets
 fluent(me(X - 1, Y), T + 1) :- 
     do(T, haut),
     fluent(me(X, Y), T).
-
-%effets rammassage de la clé
-fluent(has_key(1), T + 1) :- 
-    do(T, haut),
-    fluent(me(X, Y), T),
-    fluent(key(X-1,Y),T).
-
-removed(key(X - 1, Y), T) :- 
-    do(T, haut),
-    fluent(me(X, Y), T),
-    fluent(key(X - 1, Y), T).
-
-removed(has_key(0), T) :- 
-    do(T, haut),
-    fluent(me(X, Y), T),
-    fluent(key(X - 1, Y), T).
-
-%effets passage d'un lock
-fluent(has_key(0), T + 1) :- 
-    do(T, haut),
-    fluent(me(X, Y), T),
-    fluent(lock(X - 1, Y), T),
-    fluent(has_key(1), T).
-
-removed(lock(X-1,Y), T) :- 
-    do(T, haut),
-    fluent(me(X, Y), T),
-    fluent(lock(X-1,Y),T).
-
-removed(has_key(1), T) :- 
-    do(T, haut),
-    fluent(me(X, Y), T),
-    fluent(lock(X-1,Y),T),
-    fluent(has_key(1), T).
 
 %------------------- BAS -------------------
 %préconditions
@@ -248,49 +279,10 @@ removed(has_key(1), T) :-
     fluent(me(X, Y), T),
     fluent(skeleton(X + 1, Y),T).
 
-:- do(T, bas),
-    fluent(me(X, Y), T),
-    fluent(lock (X + 1, Y), T),
-    fluent(has_key(0), T).
-
 %effets
 fluent(me(X + 1, Y), T + 1) :- 
     do(T, bas), 
     fluent(me(X, Y), T).
-
-%effets rammassage de la clé
-fluent(has_key(1), T + 1) :- 
-    do(T, bas),
-    fluent(me(X, Y), T),
-    fluent(key(X+1,Y),T).
-
-removed(key(X + 1, Y), T) :- 
-    do(T, bas),
-    fluent(me(X, Y), T),
-    fluent(key(X + 1, Y), T).
-
-removed(has_key(0), T) :- 
-    do(T, bas),
-    fluent(me(X, Y), T),
-    fluent(key(X + 1, Y), T).
-
-%effets passage d'un lock
-fluent(has_key(0), T + 1) :- 
-    do(T, bas),
-    fluent(me(X, Y), T),
-    fluent(lock(X + 1, Y), T),
-    fluent(has_key(1), T).
-
-removed(lock(X+1,Y), T) :- 
-    do(T, bas),
-    fluent(me(X, Y), T),
-    fluent(lock(X+1,Y),T).
-
-removed(has_key(1), T) :- 
-    do(T, bas),
-    fluent(me(X, Y), T),
-    fluent(lock(X+1,Y),T),
-    fluent(has_key(1), T).
 
 %------------------- GAUCHE -------------------
 
@@ -307,49 +299,10 @@ removed(has_key(1), T) :-
     fluent(me(X, Y), T),
     fluent(skeleton(X, Y - 1),T).
 
-:- do(T, gauche),
-    fluent(me(X, Y), T),
-    fluent(lock (X, Y-1), T),
-    fluent(has_key(0), T).
-
 %effets
 fluent(me(X, Y - 1), T + 1) :- 
     do(T, gauche), 
     fluent(me(X, Y), T).
-
-%effets rammassage de la clé
-fluent(has_key(1), T + 1) :- 
-    do(T, gauche),
-    fluent(me(X, Y), T),
-    fluent(key(X,Y-1),T).
-
-removed(key(X , Y-1 ), T) :- 
-    do(T, gauche),
-    fluent(me(X, Y), T),
-    fluent(key(X, Y-1), T).
-
-removed(has_key(0), T) :- 
-    do(T, gauche),
-    fluent(me(X, Y), T),
-    fluent(key(X, Y-1), T).
-
-%effets passage d'un lock
-fluent(has_key(0), T + 1) :- 
-    do(T, gauche),
-    fluent(me(X, Y), T),
-    fluent(lock(X, Y-1), T),
-    fluent(has_key(1), T).
-
-removed(lock(X,Y-1), T) :- 
-    do(T, gauche),
-    fluent(me(X, Y), T),
-    fluent(lock(X,Y-1),T).
-
-removed(has_key(1), T) :- 
-    do(T, gauche),
-    fluent(me(X, Y), T),
-    fluent(lock(X,Y-1),T),
-    fluent(has_key(1), T).
 
 %------------------- DROITE -------------------
 %préconditions
@@ -365,49 +318,10 @@ removed(has_key(1), T) :-
     fluent(me(X, Y), T),
     fluent(skeleton(X, Y+1),T).
 
-:- do(T, droite),
-    fluent(me(X, Y), T),
-    fluent(lock (X, Y+1), T),
-    fluent(has_key(0), T).
-
 %effets
 fluent(me(X, Y+1), T+1) :- 
     do(T, droite), 
     fluent(me(X,Y),T).
-
-%effets rammassage de la clé
-fluent(has_key(1), T + 1) :- 
-    do(T, droite),
-    fluent(me(X, Y), T),
-    fluent(key(X,Y+1),T).
-
-removed(key(X , Y+1 ), T) :- 
-    do(T, droite),
-    fluent(me(X, Y), T),
-    fluent(key(X, Y+1), T).
-
-removed(has_key(0), T) :- 
-    do(T, droite),
-    fluent(me(X, Y), T),
-    fluent(key(X, Y+1), T).
-
-%effets passage d'un lock
-fluent(has_key(0), T + 1) :- 
-    do(T, droite),
-    fluent(me(X, Y), T),
-    fluent(lock(X, Y+1), T),
-    fluent(has_key(1), T).
-
-removed(lock(X,Y+1), T) :- 
-    do(T, droite),
-    fluent(me(X, Y), T),
-    fluent(lock(X,Y+1),T).
-
-removed(has_key(1), T) :- 
-    do(T, droite),
-    fluent(me(X, Y), T),
-    fluent(lock(X,Y+1),T),
-    fluent(has_key(1), T).
 
 % ------------------- PUSH BOX -------------------
 %------------------- HAUT -------------------
@@ -670,6 +584,17 @@ fluent(F, T+1) :-
 	T + 1 <= horizon.
 
 #show do/2.
-#show fluent/2.
 %#show fluent/2.
 %#show achieved/1.
+""")
+    return p
+
+
+
+if __name__ == "__main__":
+    dic = test()
+    #print(map_reader(dic['grid']))
+    pb = creating_pb(map_reader(dic['grid']), dic['max_steps'], dic['n'])
+    print(pb)
+    print(dic['max_steps'])
+    print(ASP_results(pb, dic['max_steps']))
