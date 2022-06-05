@@ -1,145 +1,3 @@
-% #const n = 8.
-% nombre(0..n).
-% etape(0..horizon-1).
-
-% wall(0, 2).
-% wall(0, 3).
-% wall(0, 4).
-% wall(0, 5).
-% wall(1, 1).
-% wall(1, 6).
-% wall(1, 7).
-% wall(2, 1).
-% fluent(skeleton(2, 2), 0).
-% wall(2, 3).
-% spike(2, 4).
-% spike(2, 5).
-% wall(2, 8).
-% wall(3, 0).
-% spike(3, 2).
-% wall(3, 3).
-% wall(3, 4).
-% spike(3, 5).
-% fluent(box(3, 5), 0).
-% spike(3, 6).
-% fluent(box(3, 6), 0).
-% fluent(box(3, 7), 0).
-% wall(3, 8).
-% wall(4, 0).
-% wall(4, 3).
-% wall(4, 4).
-% spike(4, 6).
-% wall(4, 8).
-% wall(5, 0).
-% fluent(me(5, 1), 0).
-% wall(5, 3).
-% wall(5, 4).
-% fluent(skeleton(5, 6), 0).
-% wall(5, 8).
-% wall(6, 0).
-% wall(6, 1).
-% wall(6, 2).
-% wall(6, 3).
-% wall(6, 4).
-% goal(me(5, 5)).
-% goal(me(7, 5)).
-% goal(me(6, 4)).
-% goal(me(6, 6)).
-% fluent(skeleton(6, 7), 0).
-% wall(6, 8).
-% wall(7, 0).
-% wall(7, 1).
-% wall(7, 2).
-% wall(7, 3).
-% wall(7, 4).
-% wall(7, 5).
-% wall(7, 6).
-% wall(7, 7).
-% wall(7, 8).
-% wall(6,5).
-% goal(me(7,6)).
-
-% #const n=10.
-% etape(0..31).
-% nombre(0..n).
-
-% wall(0, 0).
-% wall(0, 1).
-% wall(0, 2).
-% wall(0, 3).
-% wall(0, 4).
-% wall(0, 5).
-% wall(0, 6).
-% wall(0, 7).
-% wall(0, 8).
-% wall(0, 9).
-% wall(1, 0).
-% wall(1, 1).
-% wall(1, 2).
-% wall(1, 3).
-% wall(1, 4).
-% wall(1, 5).
-% goal(me(1, 7)).
-% wall(1, 6).
-% wall(1, 8).
-% wall(1, 9).
-% wall(2, 0).
-% wall(2, 1).
-% wall(2, 2).
-% wall(2, 3).
-% wall(2, 4).
-% wall(2, 5).
-% wall(2, 6).
-% fluent(lock(2, 7),0).
-% wall(2, 8).
-% wall(2, 9).
-% wall(3, 0).
-% wall(3, 1).
-% wall(3, 2).
-% spike(3, 4).
-% spike(3, 5).
-% fluent(me(3, 8), 0).
-% wall(3, 9).
-% wall(4, 0).
-% wall(4, 1).
-% wall(4, 2).
-% spike(4, 3).
-% wall(4, 4).
-% spike(4, 5).
-% wall(4, 6).
-% wall(4, 9).
-% wall(5, 0).
-% wall(5, 1).
-% wall(5, 2).
-% fluent(skeleton(5, 5), 0).
-% spike(5, 6).
-% spike(5, 7).
-% wall(5, 8).
-% wall(5, 9).
-% wall(6, 0).
-% fluent(key(6, 1),0).
-% wall(6, 2).
-% spike(6, 3).
-% wall(6, 4).
-% spike(6, 5).
-% wall(6, 6).
-% wall(6, 8).
-% wall(6, 9).
-% wall(7, 0).
-% fluent(skeleton(7, 6), 0).
-% wall(7, 8).
-% wall(7, 9).
-% wall(8, 0).
-% wall(8, 1).
-% wall(8, 2).
-% wall(8, 3).
-% wall(8, 4).
-% wall(8, 5).
-% wall(8, 6).
-% wall(8, 7).
-% wall(8, 8).
-% wall(8, 9).
-
 #const n=10.
 etape(0..22).
 nombre(0..n).
@@ -205,6 +63,8 @@ wall(6, 6).
 wall(6, 7).
 wall(6, 8).
 wall(6, 9).
+
+
 
 
 
@@ -576,7 +436,6 @@ removed(box(X + 1, Y), T) :-
     not fluent(box(X, Y - 1), T).
 
 %effets
-
 fluent(me(X, Y), T + 1):-
     do(T, push_gauche),
     fluent(me(X, Y), T).
@@ -609,7 +468,7 @@ fluent(box(X, Y-1), T + 1) :-
     wall(X, Y-2),
     fluent(me(X, Y), T).
 
-removed(box(X,Y),T) :-
+removed(box(X,Y-1),T) :-
     do(T, push_gauche),
     fluent(me(X, Y), T).
 
