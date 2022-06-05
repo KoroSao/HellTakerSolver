@@ -1,68 +1,53 @@
-#const n=10.
-etape(0..22).
+#const n=9.
+etape(0..42).
 nombre(0..n).
 
-wall(0, 0).
-wall(0, 1).
 wall(0, 2).
 wall(0, 3).
 wall(0, 4).
-wall(0, 5).
-wall(0, 6).
-wall(0, 7).
-wall(0, 8).
-wall(0, 9).
-wall(1, 0).
-fluent(me(1, 1), 0).
-wall(1, 2).
-fluent(key(1, 3),0).
-fluent(box(1, 5), 0).
-wall(1, 6).
-wall(1, 7).
-wall(1, 8).
-wall(1, 9).
-wall(2, 0).
+wall(1, 1).
+fluent(me(1, 3), 0).
+wall(1, 5).
+wall(2, 1).
 fluent(box(2, 2), 0).
-spike(2, 3).
-spike(2, 4).
+fluent(box(2, 3), 0).
 fluent(box(2, 4), 0).
-fluent(lock(2, 6),0).
-wall(2, 8).
-wall(2, 9).
+wall(2, 5).
 wall(3, 0).
-fluent(box(3, 1), 0).
-fluent(box(3, 3), 0).
-fluent(box(3, 5), 0).
-fluent(box(3, 6), 0).
-goal(me(2, 8)).
-goal(me(4, 8)).
-goal(me(3, 7)).
-goal(me(3, 9)).
-wall(3, 8).
-wall(3, 9).
-wall(4, 0).
-fluent(box(4, 2), 0).
-fluent(box(4, 4), 0).
-fluent(box(4, 6), 0).
-fluent(box(4, 7), 0).
-wall(4, 9).
-wall(5, 0).
+fluent(key(3, 4),0).
+wall(3, 5).
+wall(4, 1).
+evenTrap(4, 2).
+fluent(box(4, 3), 0).
+evenTrap(4, 3).
+wall(4, 6).
+wall(4, 7).
 wall(5, 1).
-fluent(box(5, 3), 0).
+fluent(skeleton(5, 2), 0).
+wall(5, 3).
+fluent(box(5, 4), 0).
 fluent(box(5, 5), 0).
-wall(5, 7).
 wall(5, 8).
-wall(5, 9).
-wall(6, 0).
 wall(6, 1).
-wall(6, 2).
-wall(6, 3).
-wall(6, 4).
-wall(6, 5).
-wall(6, 6).
+fluent(box(6, 4), 0).
+fluent(skeleton(6, 6), 0).
 wall(6, 7).
-wall(6, 8).
-wall(6, 9).
+wall(7, 2).
+wall(7, 3).
+wall(7, 4).
+fluent(lock(7, 5),0).
+fluent(box(7, 6), 0).
+wall(7, 8).
+wall(8, 4).
+goal(me(7, 6)).
+goal(me(9, 6)).
+goal(me(8, 5)).
+goal(me(8, 7)).
+wall(8, 6).
+wall(8, 7).
+wall(9, 5).
+wall(9, 6).
+
 
 
 
