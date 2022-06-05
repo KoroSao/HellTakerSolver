@@ -494,6 +494,7 @@ fluent(box(X - 2, Y), T + 1) :-
     do(T, push_haut),
     not fluent(box(X - 2, Y),T),
     not fluent(skeleton(X - 2, Y),T),
+    not fluent(lock(X - 2, Y),T),
     not wall(X - 2, Y),
     fluent(me(X, Y), T).
 
@@ -509,8 +510,14 @@ fluent(box(X - 1, Y), T + 1) :-
 
 fluent(box(X - 1, Y), T + 1) :-
     do(T, push_haut),
+    fluent(lock(X - 2, Y),T),
+    fluent(me(X, Y), T).
+
+fluent(box(X - 1, Y), T + 1) :-
+    do(T, push_haut),
     wall(X - 2, Y),
     fluent(me(X, Y), T).
+
 
 
 removed(box(X - 1, Y), T) :-
@@ -533,6 +540,7 @@ fluent(box(X + 2, Y), T + 1) :-
     do(T, push_bas),
     not fluent(box(X + 2, Y),T),
     not fluent(skeleton(X + 2, Y),T),
+    not fluent(lock(X + 2, Y),T),
     not wall(X+2, Y),
     fluent(me(X, Y), T).
 
@@ -544,6 +552,11 @@ fluent(box(X + 1, Y), T + 1) :-
 fluent(box(X + 1, Y), T + 1) :-
     do(T, push_bas),
     fluent(skeleton(X + 2, Y),T),
+    fluent(me(X, Y), T).
+
+fluent(box(X + 1, Y), T + 1) :-
+    do(T, push_bas),
+    fluent(lock(X + 2, Y),T),
     fluent(me(X, Y), T).
 
 fluent(box(X + 1, Y), T + 1) :-
@@ -572,6 +585,7 @@ fluent(box(X, Y - 2), T + 1) :-
     do(T, push_gauche),
     not fluent(box(X, Y - 2),T),
     not fluent(skeleton(X, Y - 2),T),
+    not fluent(lock(X, Y - 2),T),
     not wall(X, Y - 2),
     fluent(me(X, Y), T).
 
@@ -583,6 +597,11 @@ fluent(box(X, Y-1), T + 1) :-
 fluent(box(X, Y-1), T + 1) :-
     do(T, push_gauche),
     fluent(skeleton(X, Y-2),T),
+    fluent(me(X, Y), T).
+
+fluent(box(X, Y-1), T + 1) :-
+    do(T, push_gauche),
+    fluent(lock(X, Y-2),T),
     fluent(me(X, Y), T).
 
 fluent(box(X, Y-1), T + 1) :-
@@ -610,6 +629,7 @@ fluent(box(X, Y + 2), T + 1) :-
     do(T, push_droite),
     not fluent(box(X, Y + 2),T),
     not fluent(skeleton(X, Y + 2),T),
+    not fluent(lock(X, Y + 2),T),
     not wall(X, Y + 2),
     fluent(me(X, Y), T).
 
@@ -621,6 +641,11 @@ fluent(box(X, Y+1), T + 1) :-
 fluent(box(X, Y+1), T + 1) :-
     do(T, push_droite),
     fluent(skeleton(X, Y+2),T),
+    fluent(me(X, Y), T).
+
+fluent(box(X, Y+1), T + 1) :-
+    do(T, push_droite),
+    fluent(lock(X, Y+2),T),
     fluent(me(X, Y), T).
 
 fluent(box(X, Y+1), T + 1) :-
