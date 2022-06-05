@@ -150,7 +150,7 @@ wall(0, 2).
 wall(0, 3).
 wall(1, 0).
 wall(1, 1).
-wall(1, 2).
+fluent(box(1, 2), 0).
 wall(1, 3).
 wall(1, 4).
 wall(1, 5).
@@ -158,19 +158,33 @@ wall(1, 6).
 wall(1, 7).
 wall(2, 0).
 fluent(me(2, 2), 0).
-oddTrap(2, 4).
-evenTrap(2, 3).
+oddTrap(2, 3).
+evenTrap(2, 4).
+goal(me(1, 6)).
+goal(me(3, 6)).
 goal(me(2, 5)).
+goal(me(2, 7)).
 wall(2, 6).
 wall(2, 7).
 wall(3, 0).
 wall(3, 1).
-wall(3, 2).
+fluent(box(3, 2), 0).
 wall(3, 3).
 wall(3, 4).
 wall(3, 5).
 wall(3, 6).
 wall(3, 7).
+wall(4, 0).
+wall(4, 1).
+wall(4, 2).
+wall(4, 3).
+wall(4, 4).
+wall(4, 5).
+wall(4, 6).
+wall(4, 7).
+
+
+
 
 
 
@@ -450,10 +464,6 @@ removed(has_key(1), T) :-
 
 :- do(T, push_haut),
     fluent(me(X,Y),T),
-    wall(X - 2, Y).
-
-:- do(T, push_haut),
-    fluent(me(X,Y),T),
     fluent(skeleton(X - 2, Y),T).
 
 :- do(T, push_haut),
@@ -468,6 +478,12 @@ fluent(me(X, Y), T + 1) :-
 
 fluent(box(X - 2, Y), T + 1) :-
     do(T, push_haut),
+    not wall(X - 2, Y),
+    fluent(me(X, Y), T).
+
+fluent(box(X - 1, Y), T + 1) :-
+    do(T, push_haut),
+    wall(X - 2, Y),
     fluent(me(X, Y), T).
 
 removed(box(X - 1, Y), T) :-
@@ -486,10 +502,6 @@ removed(me(X, Y), T) :-
 
 :- do(T, push_bas),
     fluent(me(X,Y),T),
-    wall(X + 2, Y).
-
-:- do(T, push_bas),
-    fluent(me(X,Y),T),
     fluent(skeleton(X + 2, Y),T).
 
 :- do(T, push_bas),
@@ -504,6 +516,12 @@ fluent(me(X, Y), T + 1) :-
 
 fluent(box(X + 2, Y), T + 1) :-
     do(T, push_bas),
+    not wall(X+2, Y),
+    fluent(me(X, Y), T).
+
+fluent(box(X + 1, Y), T + 1) :-
+    do(T, push_bas),
+    wall(X + 2, Y),
     fluent(me(X, Y), T).
 
 removed(box(X + 1, Y), T) :-
@@ -516,10 +534,6 @@ removed(box(X + 1, Y), T) :-
 :- do(T, push_gauche),
     fluent(me(X, Y), T),
     not fluent(box(X, Y - 1), T).
-
-:- do(T, push_gauche),
-    fluent(me(X, Y), T),
-    wall(X, Y - 2).
 
 :- do(T, push_gauche),
     fluent(me(X, Y), T),
@@ -537,6 +551,12 @@ fluent(me(X, Y), T + 1):-
 
 fluent(box(X, Y - 2), T + 1) :-
     do(T, push_gauche),
+    not wall(X, Y - 2),
+    fluent(me(X, Y), T).
+
+fluent(box(X, Y-1), T + 1) :-
+    do(T, push_gauche),
+    wall(X, Y-2),
     fluent(me(X, Y), T).
 
 removed(me(X,Y),T) :-
@@ -548,10 +568,6 @@ removed(me(X,Y),T) :-
 :- do(T,push_droite),
     fluent(me(X, Y), T),
     not fluent(box(X, Y + 1), T).
-
-:- do(T, push_droite),
-    fluent(me(X,Y),T),
-    wall(X, Y + 2).
 
 :- do(T, push_droite),
     fluent(me(X,Y),T),
@@ -569,6 +585,12 @@ fluent(me(X,Y), T + 1) :-
 
 fluent(box(X, Y + 2), T + 1) :-
     do(T, push_droite),
+    not wall(X, Y + 2),
+    fluent(me(X, Y), T).
+
+fluent(box(X, Y+1), T + 1) :-
+    do(T, push_droite),
+    wall(X, Y+2),
     fluent(me(X, Y), T).
 
 removed(box(X, Y + 1), T) :-
