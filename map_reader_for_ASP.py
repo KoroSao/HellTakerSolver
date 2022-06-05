@@ -64,53 +64,55 @@ def ASP_results(pb, nb_coups):
 def map_reader(grid, nb_coups):
     asp_enc = ""
 
-    for i in range(len(grid)):
-        for j in range(len(grid[0])):
-            if grid[i][j] == 'H':
+    for i,elt in enumerate(grid):
+        for j,case in enumerate(elt):
+            if case == 'H':
                 asp_enc = "\n".join([asp_enc, f"fluent(me({i}, {j}), 0)."])
-            if grid[i][j] == 'D':
+            if case == 'D':
                 asp_enc = "\n".join([asp_enc, f"goal(me({i-1}, {j}))."])
                 asp_enc = "\n".join([asp_enc, f"goal(me({i+1}, {j}))."])
                 asp_enc = "\n".join([asp_enc, f"goal(me({i}, {j-1}))."])
                 asp_enc = "\n".join([asp_enc, f"goal(me({i}, {j+1}))."])
                 asp_enc = "\n".join([asp_enc, f"wall({i}, {j})."])
-            if grid[i][j] == '#':
+            if case == '#':
                 asp_enc = "\n".join([asp_enc, f"wall({i}, {j})."])
-            if grid[i][j] == 'B':
+            if case == 'B':
                 asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
-            if grid[i][j] == 'M':
+            if case == 'M':
                 asp_enc = "\n".join([asp_enc, f"fluent(skeleton({i}, {j}), 0)."])
-            if grid[i][j] == 'K':
+            if case == 'K':
                 asp_enc = "\n".join([asp_enc, f"fluent(key({i}, {j}),0)."])
-            if grid[i][j] == 'L':
+            if case == 'L':
                 asp_enc = "\n".join([asp_enc, f"fluent(lock({i}, {j}),0)."])
-            if grid[i][j] == 'S':
+            if case == 'S':
                 asp_enc = "\n".join([asp_enc, f"spike({i}, {j})."])
-            if grid[i][j] == 'T':
+            if case == 'T':
                 if (nb_coups %2) == 0:
                     asp_enc = "\n".join([asp_enc, f"oddTrap({i}, {j})."])
                 else:
                     asp_enc = "\n".join([asp_enc, f"evenTrap({i}, {j})."])
-            if grid[i][j] == 'U':
+            if case == 'U':
                 if (nb_coups %2) != 0:
                     asp_enc = "\n".join([asp_enc, f"oddTrap({i}, {j})."])
                 else:
                     asp_enc = "\n".join([asp_enc, f"evenTrap({i}, {j})."])
-            if grid[i][j] == 'O':
+            if case == 'O':
                 asp_enc = "\n".join([asp_enc, f"spike({i}, {j})."])
                 asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
-            if grid[i][j] == 'P':
+            if case == 'P':
                 asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
                 if nb_coups %2 == 0:
                     asp_enc = "\n".join([asp_enc, f"oddTrap({i}, {j})."])
                 else:
                     asp_enc = "\n".join([asp_enc, f"evenTrap({i}, {j})."])
-            if grid[i][j] == 'Q':
+            if case == 'Q':
                 asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
                 if nb_coups %2 != 0:
                     asp_enc = "\n".join([asp_enc, f"oddTrap({i}, {j})."])
                 else:
                     asp_enc = "\n".join([asp_enc, f"evenTrap({i}, {j})."])
+            else:
+                continue
 
     return asp_enc
 

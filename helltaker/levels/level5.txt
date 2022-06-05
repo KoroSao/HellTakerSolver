@@ -1,6 +1,6 @@
 Level 5 (merci à R. Froger)
 23
-    ##
+########
    # D#
  ## LB #
 #H#T B #
