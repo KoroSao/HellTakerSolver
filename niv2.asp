@@ -150,7 +150,7 @@ wall(0, 2).
 wall(0, 3).
 wall(1, 0).
 wall(1, 1).
-fluent(box(1, 2), 0).
+wall(1, 2).
 wall(1, 3).
 wall(1, 4).
 wall(1, 5).
@@ -158,12 +158,9 @@ wall(1, 6).
 wall(1, 7).
 wall(2, 0).
 fluent(me(2, 2), 0).
-oddTrap(2, 3).
-evenTrap(2, 4).
-goal(me(1, 6)).
-goal(me(3, 6)).
+oddTrap(2, 4).
+evenTrap(2, 3).
 goal(me(2, 5)).
-goal(me(2, 7)).
 wall(2, 6).
 wall(2, 7).
 wall(3, 0).
@@ -672,36 +669,72 @@ removed(skeleton(X, Y+1), T) :-
 
 %%%
 
+%--------- Cout d'un coup classique -----------
 fluent(coups_restants(D -1), T + 1) :-
 	do(T, A),
 	A != nop,
 	fluent(me(X, Y), T+1),
 	not spike(X, Y),
+    not evenTrap(X,Y),
+    not oddTrap(X,Y),
 	fluent(coups_restants(D), T).
 
+%--------- Cout d'un coup avec spike -----------
 fluent(coups_restants(D - 2), T + 1) :-
 	do(T, A),
 	A != nop,
 	fluent(me(X,Y), T+1),
 	spike(X,Y),
+    not evenTrap(X,Y),
+    not oddTrap(X,Y),
 	fluent(coups_restants(D), T).
 
+
+%--------- Cout d'un coup avec oddTrap -----------
+fluent(coups_restants(D - 2), T + 1) :-
+	do(T, A),
+	A != nop,
+	fluent(me(X,Y), T+1),
+	oddTrap(X,Y),
+    not spike(X,Y),
+    not evenTrap(X,Y),
+	fluent(coups_restants(D), T),
+    T\2 = 0.
+
+fluent(coups_restants(D - 1), T + 1) :-
+	do(T, A),
+	A != nop,
+	fluent(me(X,Y), T+1),
+	oddTrap(X,Y),
+    not spike(X,Y),
+    not evenTrap(X,Y),
+	fluent(coups_restants(D), T),
+    T\2 != 0.
+
+%--------- Cout d'un coup avec evenTrap -----------
 fluent(coups_restants(D - 2), T + 1) :-
 	do(T, A),
 	A != nop,
 	fluent(me(X,Y), T+1),
 	evenTrap(X,Y),
+    not spike(X,Y),
+    not oddTrap(X,Y),
 	fluent(coups_restants(D), T),
-    D mod 2  = 0.
+    T\2 != 0.
 
-fluent(coups_restants(D - 2), T + 1) :-
+fluent(coups_restants(D - 1), T + 1) :-
 	do(T, A),
 	A != nop,
 	fluent(me(X,Y), T+1),
 	evenTrap(X,Y),
+    not spike(X,Y),
+    not oddTrap(X,Y),
 	fluent(coups_restants(D), T),
-    D mod 2 \= 0.
+    T\2 = 0.
 
+
+
+%--------- MAJ des fluents -----------
 removed(me(X, Y), T) :- 
     do(T, _),
     fluent(me(X,Y), T).
