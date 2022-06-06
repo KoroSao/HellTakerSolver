@@ -1,3 +1,4 @@
+
 fluent(coups_restants(horizon), 0).
 fluent(has_key(0), 0).
 %------------------- ACTIONS -------------------

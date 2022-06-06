@@ -1,60 +1,57 @@
 #const n=8.
-etape(0..22).
+etape(0..23).
 nombre(0..n).
 
-wall(0, 0).
 wall(0, 1).
 wall(0, 2).
 wall(0, 3).
 wall(0, 4).
-wall(0, 5).
-wall(0, 6).
-wall(0, 7).
-wall(1, 3).
-goal(me(0, 5)).
-goal(me(2, 5)).
-goal(me(1, 4)).
-goal(me(1, 6)).
+wall(1, 0).
 wall(1, 5).
 wall(1, 6).
-wall(2, 1).
+wall(2, 0).
+fluent(skeleton(2, 1), 0).
 wall(2, 2).
-fluent(lock(2, 4),0).
-fluent(box(2, 5), 0).
+spike(2, 3).
+spike(2, 4).
 wall(2, 7).
-wall(3, 0).
-fluent(me(3, 1), 0).
+spike(3, 1).
 wall(3, 2).
-evenTrap(3, 3).
+wall(3, 3).
+spike(3, 4).
+fluent(box(3, 4), 0).
+spike(3, 5).
 fluent(box(3, 5), 0).
+fluent(box(3, 6), 0).
 wall(3, 7).
-wall(4, 0).
 wall(4, 2).
-evenTrap(4, 4).
-evenTrap(4, 6).
+wall(4, 3).
+spike(4, 5).
 wall(4, 7).
-wall(5, 0).
-fluent(skeleton(5, 1), 0).
+fluent(me(5, 0), 0).
 wall(5, 2).
-fluent(box(5, 3), 0).
-fluent(box(5, 4), 0).
-fluent(box(5, 5), 0).
-fluent(box(5, 6), 0).
+wall(5, 3).
+fluent(skeleton(5, 5), 0).
 wall(5, 7).
 wall(6, 0).
-evenTrap(6, 1).
-evenTrap(6, 3).
-evenTrap(6, 6).
+wall(6, 1).
+wall(6, 2).
+wall(6, 3).
+goal(me(5, 4)).
+goal(me(7, 4)).
+goal(me(6, 3)).
+goal(me(6, 5)).
+wall(6, 4).
+fluent(skeleton(6, 6), 0).
 wall(6, 7).
+wall(7, 0).
 wall(7, 1).
 wall(7, 2).
 wall(7, 3).
 wall(7, 4).
 wall(7, 5).
-fluent(key(7, 6),0).
+wall(7, 6).
 wall(7, 7).
-wall(8, 6).
-
 
 fluent(coups_restants(horizon), 0).
 fluent(has_key(0), 0).

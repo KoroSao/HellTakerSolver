@@ -248,6 +248,6 @@ if __name__ == "__main__":
     dic = test()
     #print(map_reader(dic['grid']))
     pb = creating_pb(map_reader(dic['grid'], dic['max_steps']), dic['max_steps'], dic['n'])
-    print(pb)
+    #print(pb)
     print(dic['max_steps'])
     print(ASP_results(pb, dic['max_steps']))
