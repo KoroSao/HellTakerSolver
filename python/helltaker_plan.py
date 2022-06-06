@@ -1,7 +1,7 @@
 import sys
 from helltaker_utils import grid_from_file, check_plan
 from collections import namedtuple
-from pprint import *
+import time
 
 State = namedtuple('state', ('pusher','boxes','skeletons','chests','keys','hasKey','nbMove','t'))
 MapRules = namedtuple('maprules', ('goals','waifu','walls','traps','evenTraps', 'oddTraps','max_move'))
@@ -206,12 +206,7 @@ def monsuperplanificateur(infos):
             return None
 
     s0, map_rules, free, goals, succ, trapped, on_waifu, on_evenTrap, on_oddTrap = factory(infos['grid'], infos['max_steps'])
-
-    #print(map_rules)
-
     s_end, save = search_with_parent(s0, goals, succ, remove_head, insert_tail)
-
-    #print(s_end)
     plan = ''.join([a for s,a in dict2path(s_end,save) if a])
     return plan
 
@@ -235,4 +230,6 @@ def main():
 
 
 if __name__ == "__main__":
+    start_time = time.time()
     main()
+    print("--- %s seconds ---" % (time.time() - start_time))
