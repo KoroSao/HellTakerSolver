@@ -3,7 +3,7 @@ from helltaker_utils import grid_from_file, check_plan
 from collections import namedtuple
 from pprint import *
 
-State = namedtuple('state', ('pusher','boxes','skeletons','chests','keys','hasKey','nbMove'))
+State = namedtuple('state', ('pusher','boxes','skeletons','chests','keys','hasKey','nbMove','t'))
 MapRules = namedtuple('maprules', ('goals','waifu','walls','traps','evenTraps', 'oddTraps','max_move'))
 actions = {d: d for d in 'hbdg'}
 
@@ -109,7 +109,7 @@ def monsuperplanificateur(infos):
                     else:
                         evenTraps.append((i,j))
 
-        s0 = State( pusher, frozenset(boxes), frozenset(skeletons),frozenset(chest),frozenset(key), False, nb_allowed_move)
+        s0 = State( pusher, frozenset(boxes), frozenset(skeletons),frozenset(chest),frozenset(key), False, nb_allowed_move,0)
         
         
         end_positions = []
@@ -162,45 +162,46 @@ def monsuperplanificateur(infos):
         skeletons = state.skeletons
         keys = state.keys
         chests = state.chests
+        t = state.t
         X1 = one_step(X0, direction)
         X2 = one_step(X1, direction)
 
         penalty = 0
         if trapped(X0):
             penalty += 1
-        if on_evenTrap(X1) and (state.nbMove%2==0):
+        if on_evenTrap(X1) and (t%2!=0):
             penalty += 1
-        if on_oddTrap(X1) and (state.nbMove%2!=0):
+        if on_oddTrap(X1) and (t%2==0):
             penalty += 1
 
 
         if free(X1) and not (X1 in boxes) and not(X1 in chests):
             if not (X1 in skeletons):
                 if not (X1 in keys):
-                    return State(X1, frozenset(boxes), frozenset(skeletons),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty)
+                    return State(X1, frozenset(boxes), frozenset(skeletons),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty,t+1)
                 else:
-                    return State(X1, frozenset(boxes), frozenset(skeletons),frozenset(state.chests),frozenset(state.keys - {X1}), True, state.nbMove-1-penalty)
+                    return State(X1, frozenset(boxes), frozenset(skeletons),frozenset(state.chests),frozenset(state.keys - {X1}), True, state.nbMove-1-penalty,t+1)
 
             else:
                 if free(X2) and not (X2 in boxes) and not (X2 in chests):
-                    if (on_evenTrap(X2) and state.nbMove%2==0) or (on_oddTrap(X2) and state.nbMove%2!=0):
-                        return State(X0, frozenset(boxes), frozenset(skeletons - {X1}),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty)
+                    if (on_evenTrap(X2) and t%2==0) or (on_oddTrap(X2) and t%2!=0):
+                        return State(X0, frozenset(boxes), frozenset(skeletons - {X1}),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty,t+1)
                     else:
-                        return State(X0, frozenset(boxes), frozenset({X2} | skeletons - {X1}),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty)
+                        return State(X0, frozenset(boxes), frozenset({X2} | skeletons - {X1}),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty,t+1)
                 else:
-                    return State(X0, frozenset(boxes), frozenset(skeletons - {X1}),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty)
+                    return State(X0, frozenset(boxes), frozenset(skeletons - {X1}),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty,t+1)
 
 
         elif X1 in boxes and not(X1 in chests):
             if free(X2) and not (X2 in boxes) and not (X2 in skeletons) and not on_waifu(X2) and not (X2 in chests):
-                return State(X0, frozenset({X2} | boxes - {X1}),frozenset(skeletons),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty)
+                return State(X0, frozenset({X2} | boxes - {X1}),frozenset(skeletons),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty,t+1)
 
         elif (X1 in chests) and state.hasKey == True:
-            return State(X1, frozenset(boxes), frozenset(skeletons),frozenset(state.chests - {X1}),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty)
+            return State(X1, frozenset(boxes), frozenset(skeletons),frozenset(state.chests - {X1}),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty,t+1)
 
 
         elif free(X1):
-            return State(X0, frozenset(boxes),frozenset(skeletons),frozenset(state.chests),frozenset(state.keys),state.hasKey, state.nbMove-1-penalty)
+            return State(X0, frozenset(boxes),frozenset(skeletons),frozenset(state.chests),frozenset(state.keys),state.hasKey, state.nbMove-1-penalty,t+1)
         else:
             return None
 
@@ -221,7 +222,6 @@ def main():
 
     # récupération de la grille et de toutes les infos
     infos = grid_from_file(filename)
-    print(infos['grid'])
 
     # calcul du plan
     plan = monsuperplanificateur(infos)
