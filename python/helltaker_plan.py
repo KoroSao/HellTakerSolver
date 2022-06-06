@@ -3,6 +3,7 @@ import resource
 from collections import namedtuple
 from helltaker_utils import grid_from_file, check_plan
 
+
 State = namedtuple(
     "state", ("pusher", "boxes", "skeletons", "chests", "keys", "hasKey", "nbMove", "t")
 )
@@ -14,27 +15,23 @@ actions = {d: d for d in "hbdg"}
 
 
 def insert_tail(s, l):
+    """Insert en fin de liste"""
     l.append(s)
     return l
 
 
 def remove_head(l):
+    """Retire en tête de liste"""
     return l.pop(0), l
 
 
 def remove_tail(l):
+    """Retire en fin de liste"""
     return l.pop(), l
-
-
-def remove2(l):
-    return l.pop(), l
-
-
-def insert2(s, l):
-    return l.append(s)
 
 
 def dict2path(s, d):
+    """Transforme un dictionnaire en une liste de mouvements"""
     l = [(s, None)]
     while not d[s] is None:
         parent, a = d[s]
@@ -45,6 +42,7 @@ def dict2path(s, d):
 
 
 def search_with_parent(s_0, goals, succ, remove, insert):
+    """Recherche dans un espace d'etat avec sauvegarde des etats parents"""
     l = [s_0]
     save = {s_0: None}
     s = s_0
@@ -60,7 +58,14 @@ def search_with_parent(s_0, goals, succ, remove, insert):
 
 
 def monsuperplanificateur(infos):
+    """Planificateur de l'IA"""
+
     def factory(grid, max_steps):
+        """
+        Design pattern Factory
+        Lit la grille et retourne les règles de la grille
+        Retourne les méthodes succ, goals, walls, traps, even_traps, odd_traps
+        """
         walls = []  # Walls
         targets = []  # Waifu targets
         pusher = ()  # Initial position of the pusher
@@ -148,36 +153,45 @@ def monsuperplanificateur(infos):
         )
 
         def on_even_trap(position):
+            """Retourne vrai si la position est un trap paire"""
             return position in map_rules.even_traps
 
         def on_odd_trap(position):
+            """Retourne vrai si la position est un trap impaire"""
             return position in map_rules.odd_traps
 
         def on_waifu(position):
+            """Retourne vrai si la position est une waifu"""
             return position in map_rules.waifu
 
         def free(position):
+            """Retourne vrai si la position est libre"""
             return not position in map_rules.walls
 
         def trapped(position):
+            """Retourne vrai si la position est un trap"""
             return position in map_rules.traps
 
         def goals(state):
+            """Retourne vrai si la position est une cible"""
             return state.pusher in map_rules.goals and state.nbMove >= 0
 
         def succ(state):
+            """Retourne les successeurs d'un état"""
             l = [(do_fn(a, state), a) for a in actions.values()]
             return {x: a for x, a in l if x}
 
         return s_0, free, goals, succ, trapped, on_waifu, on_even_trap, on_odd_trap
 
     def one_step(position, direction):
+        """Retourne la position d'une case à partir d'une position et d'une direction"""
         i, j = position
         return {"d": (i, j + 1), "g": (i, j - 1), "h": (i - 1, j), "b": (i + 1, j)}[
             direction
         ]
 
     def do_fn(direction, state):
+        """Calcule les successeurs valides d'un état"""
         if state.nbMove <= 0:
             return None
         x_0 = state.pusher
@@ -259,7 +273,7 @@ def monsuperplanificateur(infos):
                 t + 1,
             )
 
-        elif x_1 in boxes and not x_1 in chests and not x_2 in chests:
+        if x_1 in boxes and not x_1 in chests and not x_2 in chests:
             if (
                 free(x_2)
                 and not x_2 in boxes
@@ -278,7 +292,7 @@ def monsuperplanificateur(infos):
                 )
             return None
 
-        elif (x_1 in chests) and state.hasKey:
+        if (x_1 in chests) and state.hasKey:
             return State(
                 x_1,
                 frozenset(boxes),
@@ -290,7 +304,7 @@ def monsuperplanificateur(infos):
                 t + 1,
             )
 
-        elif free(x_1):
+        if free(x_1):
             return State(
                 x_0,
                 frozenset(boxes),
@@ -313,6 +327,7 @@ def monsuperplanificateur(infos):
 
 
 def main():
+    """Programme principal"""
     # récupération du nom du fichier depuis la ligne de commande
     filename = sys.argv[1]
 
