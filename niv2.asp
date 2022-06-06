@@ -1,62 +1,59 @@
-#const n=9.
-etape(0..42).
+#const n=8.
+etape(0..22).
 nombre(0..n).
 
+wall(0, 0).
+wall(0, 1).
 wall(0, 2).
 wall(0, 3).
 wall(0, 4).
-wall(1, 1).
-fluent(me(1, 3), 0).
+wall(0, 5).
+wall(0, 6).
+wall(0, 7).
+wall(1, 3).
+goal(me(0, 5)).
+goal(me(2, 5)).
+goal(me(1, 4)).
+goal(me(1, 6)).
 wall(1, 5).
+wall(1, 6).
 wall(2, 1).
-fluent(box(2, 2), 0).
-fluent(box(2, 3), 0).
-fluent(box(2, 4), 0).
-wall(2, 5).
+wall(2, 2).
+fluent(lock(2, 4),0).
+fluent(box(2, 5), 0).
+wall(2, 7).
 wall(3, 0).
-fluent(key(3, 4),0).
-wall(3, 5).
-wall(4, 1).
-evenTrap(4, 2).
-fluent(box(4, 3), 0).
-evenTrap(4, 3).
-wall(4, 6).
+fluent(me(3, 1), 0).
+wall(3, 2).
+evenTrap(3, 3).
+fluent(box(3, 5), 0).
+wall(3, 7).
+wall(4, 0).
+wall(4, 2).
+evenTrap(4, 4).
+evenTrap(4, 6).
 wall(4, 7).
-wall(5, 1).
-fluent(skeleton(5, 2), 0).
-wall(5, 3).
+wall(5, 0).
+fluent(skeleton(5, 1), 0).
+wall(5, 2).
+fluent(box(5, 3), 0).
 fluent(box(5, 4), 0).
 fluent(box(5, 5), 0).
-wall(5, 8).
-wall(6, 1).
-fluent(box(6, 4), 0).
-fluent(skeleton(6, 6), 0).
+fluent(box(5, 6), 0).
+wall(5, 7).
+wall(6, 0).
+evenTrap(6, 1).
+evenTrap(6, 3).
+evenTrap(6, 6).
 wall(6, 7).
+wall(7, 1).
 wall(7, 2).
 wall(7, 3).
 wall(7, 4).
-fluent(lock(7, 5),0).
-fluent(box(7, 6), 0).
-wall(7, 8).
-wall(8, 4).
-goal(me(7, 6)).
-goal(me(9, 6)).
-goal(me(8, 5)).
-goal(me(8, 7)).
+wall(7, 5).
+fluent(key(7, 6),0).
+wall(7, 7).
 wall(8, 6).
-wall(8, 7).
-wall(9, 5).
-wall(9, 6).
-
-
-
-
-
-
-
-
-
-
 
 
 fluent(coups_restants(horizon), 0).
@@ -696,8 +693,8 @@ fluent(F, T+1) :-
 	T + 1 <= horizon.
 
 #show do/2.
-#show fluent/2.
-#show oddTrap/2.
-#show evenTrap/2.
+%#show fluent/2.
+%#show oddTrap/2.
+%#show evenTrap/2.
 %#show fluent/2.
 %#show achieved/1.
