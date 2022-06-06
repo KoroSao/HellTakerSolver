@@ -1,10 +1,11 @@
 import sys
-from helltaker_utils import grid_from_file, check_plan
+import resource
 from collections import namedtuple
-import time
+from helltaker_utils import grid_from_file, check_plan
 
 State = namedtuple('state', ('pusher','boxes','skeletons','chests','keys','hasKey','nbMove','t'))
-MapRules = namedtuple('maprules', ('goals','waifu','walls','traps','evenTraps', 'oddTraps','max_move'))
+MapRules = namedtuple('maprules', ('goals','waifu','walls','traps','even_traps',\
+    'odd_traps','max_move'))
 actions = {d: d for d in 'hbdg'}
 
 
@@ -34,26 +35,23 @@ def dict2path(s, d):
     l.reverse()
     return l
 
-def search_with_parent(s0, goals, succ, remove, insert, debug=False) :
-    l = [s0]
-    save = {s0: None}
-    s = s0
+def search_with_parent(s_0, goals, succ, remove, insert) :
+    l = [s_0]
+    save = {s_0: None}
+    s = s_0
     while l:
-        if debug:
-            print("l =", l)
         s, l = remove(l)
-        for s2,a in succ(s).items():
-            if not s2 in save:
-                save[s2] = (s,a)
-                if goals(s2):
-                    return s2, save
-                insert(s2, l)
+        for s_2,a in succ(s).items():
+            if not s_2 in save:
+                save[s_2] = (s,a)
+                if goals(s_2):
+                    return s_2, save
+                insert(s_2, l)
     return None, save
 
 
 def monsuperplanificateur(infos):
-    def factory(grid, max_steps, debug = False):
-        nb_allowed_move = max_steps #To read in file 
+    def factory(grid, max_steps):
         walls = []    #Walls
         targets = []  #Waifu targets
         pusher = ()   #Initial position of the pusher
@@ -62,11 +60,10 @@ def monsuperplanificateur(infos):
         traps = []    #Non-moving traps in map
         chest = []
         key = []
-        evenTraps = []
-        oddTraps = []
+        even_traps = []
+        odd_traps = []
         for i,elt in enumerate(grid):
             for j,case in enumerate(elt):
-                if debug: print(i,j,case)
                 if case == '#':
                     walls.append((i,j))
                 elif case == 'H':
@@ -88,30 +85,30 @@ def monsuperplanificateur(infos):
                     key.append((i,j))
                 elif case == "T":
                     if (max_steps %2) == 0:
-                        oddTraps.append((i,j))
+                        odd_traps.append((i,j))
                     else:
-                        evenTraps.append((i,j))
+                        even_traps.append((i,j))
                 elif case == "U":
                     if (max_steps %2) != 0:
-                        oddTraps.append((i,j))
+                        odd_traps.append((i,j))
                     else:
-                        evenTraps.append((i,j))
+                        even_traps.append((i,j))
                 elif case == "P":
                     boxes.append((i,j))
                     if max_steps %2 == 0:
-                        oddTraps.append((i,j))
+                        odd_traps.append((i,j))
                     else:
-                        evenTraps.append((i,j))
+                        even_traps.append((i,j))
                 elif case == "Q":
                     boxes.append((i,j))
                     if max_steps %2 != 0:
-                        oddTraps.append((i,j))
+                        odd_traps.append((i,j))
                     else:
-                        evenTraps.append((i,j))
+                        even_traps.append((i,j))
 
-        s0 = State( pusher, frozenset(boxes), frozenset(skeletons),frozenset(chest),frozenset(key), False, nb_allowed_move,0)
-        
-        
+        s_0 = State( pusher, frozenset(boxes), frozenset(skeletons),frozenset(chest),\
+            frozenset(key),False, max_steps,0)
+    
         end_positions = []
         for waifu in targets:
             if (waifu[0] + 1,waifu[1]) not in walls:
@@ -123,90 +120,106 @@ def monsuperplanificateur(infos):
             if (waifu[0],waifu[1] - 1)  not in walls:
                 end_positions.append((waifu[0],waifu[1] - 1))
 
-        MR = MapRules(frozenset(end_positions), frozenset(targets), frozenset(walls), frozenset(traps), frozenset(evenTraps), frozenset(oddTraps), nb_allowed_move)   
+        map_rules = MapRules(frozenset(end_positions), frozenset(targets), frozenset(walls),\
+            frozenset(traps), frozenset(even_traps), frozenset(odd_traps), max_steps)
 
-        def on_evenTrap(position):
-            return position in MR.evenTraps
+        def on_even_trap(position):
+            return position in map_rules.even_traps
 
-        def on_oddTrap(position):
-            return position in MR.oddTraps
+        def on_odd_trap(position):
+            return position in map_rules.odd_traps
 
         def on_waifu(position):
-            return position in MR.waifu
+            return position in map_rules.waifu
 
         def free(position) :
-            return not(position in MR.walls)
+            return not position in map_rules.walls
 
         def trapped(position):
-            return position in MR.traps
+            return position in map_rules.traps
 
         def goals(state) :
-            return state.pusher in MR.goals and state.nbMove >= 0
-        
+            return state.pusher in map_rules.goals and state.nbMove >= 0
+
         def succ(state) :
             l = [(do_fn(a,state),a) for a in actions.values()]
             return  {x : a for x,a in l if x}
 
-        return s0, MR, free, goals, succ, trapped, on_waifu, on_evenTrap, on_oddTrap
+        return s_0, free, goals, succ, trapped, on_waifu, on_even_trap, on_odd_trap
 
     def one_step(position, direction) :
         i, j = position
         return {'d' : (i,j+1), 'g' : (i,j-1), 'h' : (i-1,j), 'b' : (i+1,j)}[direction]
 
 
-    def do_fn(direction, state) :
+    def do_fn(direction, state):
         if state.nbMove <= 0:
             return None
-        X0 = state.pusher
+        x_0 = state.pusher
         boxes = state.boxes
         skeletons = state.skeletons
         keys = state.keys
         chests = state.chests
         t = state.t
-        X1 = one_step(X0, direction)
-        X2 = one_step(X1, direction)
+        x_1 = one_step(x_0, direction)
+        x_2 = one_step(x_1, direction)
 
         penalty = 0
-        if trapped(X0):
+        if trapped(x_0):
             penalty += 1
-        if on_evenTrap(X1) and (t%2!=0):
+        if on_even_trap(x_1) and (t%2!=0):
             penalty += 1
-        if on_oddTrap(X1) and (t%2==0):
+        if on_odd_trap(x_1) and (t%2==0):
             penalty += 1
 
 
-        if free(X1) and not (X1 in boxes) and not(X1 in chests):
-            if not (X1 in skeletons):
-                if not (X1 in keys):
-                    return State(X1, frozenset(boxes), frozenset(skeletons),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty,t+1)
-                else:
-                    return State(X1, frozenset(boxes), frozenset(skeletons),frozenset(state.chests),frozenset(state.keys - {X1}), True, state.nbMove-1-penalty,t+1)
+        if free(x_1) and not x_1 in boxes and not x_1 in chests:
+            if not x_1 in skeletons:
+                if not x_1 in keys:
+                    return State(x_1, frozenset(boxes), frozenset(skeletons),\
+                        frozenset(state.chests),frozenset(state.keys), state.hasKey,\
+                        state.nbMove-1-penalty,t+1)
 
-            else:
-                if free(X2) and not (X2 in boxes) and not (X2 in chests):
-                    if (on_evenTrap(X2) and t%2==0) or (on_oddTrap(X2) and t%2!=0):
-                        return State(X0, frozenset(boxes), frozenset(skeletons - {X1}),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty,t+1)
-                    else:
-                        return State(X0, frozenset(boxes), frozenset({X2} | skeletons - {X1}),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty,t+1)
-                else:
-                    return State(X0, frozenset(boxes), frozenset(skeletons - {X1}),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty,t+1)
+                return State(x_1, frozenset(boxes), frozenset(skeletons),\
+                    frozenset(state.chests),frozenset(state.keys - {x_1}),\
+                    True, state.nbMove-1-penalty,t+1)
+
+            if free(x_2) and not x_2 in boxes and not x_2 in chests:
+                if (on_even_trap(x_2) and t%2==0) or (on_odd_trap(x_2) and t%2!=0):
+                    return State(x_0, frozenset(boxes), frozenset(skeletons - {x_1}),\
+                        frozenset(state.chests),frozenset(state.keys), state.hasKey,\
+                        state.nbMove-1-penalty,t+1)
+
+                return State(x_0, frozenset(boxes), frozenset({x_2} | skeletons - {x_1}),\
+                    frozenset(state.chests),frozenset(state.keys), state.hasKey,\
+                    state.nbMove-1-penalty,t+1)
+
+            return State(x_0, frozenset(boxes), frozenset(skeletons - {x_1}),\
+                frozenset(state.chests),frozenset(state.keys), state.hasKey,\
+                state.nbMove-1-penalty,t+1)
 
 
-        elif X1 in boxes and not(X1 in chests):
-            if free(X2) and not (X2 in boxes) and not (X2 in skeletons) and not on_waifu(X2) and not (X2 in chests):
-                return State(X0, frozenset({X2} | boxes - {X1}),frozenset(skeletons),frozenset(state.chests),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty,t+1)
-
-        elif (X1 in chests) and state.hasKey == True:
-            return State(X1, frozenset(boxes), frozenset(skeletons),frozenset(state.chests - {X1}),frozenset(state.keys), state.hasKey, state.nbMove-1-penalty,t+1)
-
-
-        elif free(X1):
-            return State(X0, frozenset(boxes),frozenset(skeletons),frozenset(state.chests),frozenset(state.keys),state.hasKey, state.nbMove-1-penalty,t+1)
-        else:
+        elif x_1 in boxes and not x_1 in chests and not x_2 in chests:
+            if free(x_2) and not x_2 in boxes and not x_2 in skeletons and not on_waifu(x_2) :
+                return State(x_0, frozenset({x_2} | boxes - {x_1}),frozenset(skeletons),\
+                    frozenset(state.chests),frozenset(state.keys), state.hasKey,\
+                    state.nbMove-1-penalty,t+1)
             return None
 
-    s0, map_rules, free, goals, succ, trapped, on_waifu, on_evenTrap, on_oddTrap = factory(infos['grid'], infos['max_steps'])
-    s_end, save = search_with_parent(s0, goals, succ, remove_head, insert_tail)
+        elif (x_1 in chests) and state.hasKey:
+            return State(x_1,frozenset(boxes),frozenset(skeletons),frozenset(state.chests - {x_1}),\
+                frozenset(state.keys), state.hasKey, state.nbMove-1-penalty,t+1)
+
+
+        elif free(x_1):
+            return State(x_0, frozenset(boxes),frozenset(skeletons),frozenset(state.chests),\
+                frozenset(state.keys),state.hasKey, state.nbMove-1-penalty,t+1)
+
+        return None
+
+
+    s_0,free,goals,succ,trapped,on_waifu,on_even_trap,on_odd_trap=factory(infos['grid'], infos['max_steps'])
+    s_end, save = search_with_parent(s_0, goals, succ, remove_head, insert_tail)
     plan = ''.join([a for s,a in dict2path(s_end,save) if a])
     return plan
 
@@ -230,6 +243,7 @@ def main():
 
 
 if __name__ == "__main__":
-    start_time = time.time()
+    
     main()
-    print("--- %s seconds ---" % (time.time() - start_time))
+    print(resource.getrusage(resource.RUSAGE_SELF))
+    
