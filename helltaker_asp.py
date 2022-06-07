@@ -214,5 +214,5 @@ if __name__ == "__main__":
         map_reader(dic["grid"], dic["max_steps"]), dic["max_steps"], dic["n"]
     )
     # print(pb)
-    print(dic["max_steps"])
+    # print(dic["max_steps"])
     print(asp_res_to_table(encoded_problem, dic["max_steps"]))

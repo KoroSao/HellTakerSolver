@@ -268,6 +268,10 @@ removed(has_key(1), T) :-
     fluent(me(X, Y), T),
     not fluent(box(X - 1, Y), T).
 
+:- do(T,push_haut),
+    fluent(me(X, Y), T),
+    wall(X-1, Y).
+
 %effets
 
 fluent(me(X, Y), T + 1) :- 
@@ -314,6 +318,10 @@ removed(box(X - 1, Y), T) :-
     fluent(me(X, Y), T),
     not fluent(box(X + 1, Y), T).
 
+:- do(T,push_bas),
+    fluent(me(X, Y), T),
+    wall(X+1, Y).
+
 %effets
 
 fluent(me(X, Y), T + 1) :- 
@@ -359,6 +367,10 @@ removed(box(X + 1, Y), T) :-
     fluent(me(X, Y), T),
     not fluent(box(X, Y - 1), T).
 
+:- do(T, push_gauche),
+    fluent(me(X, Y), T),
+    wall(X,Y-1).
+
 %effets
 fluent(me(X, Y), T + 1):-
     do(T, push_gauche),
@@ -401,6 +413,10 @@ removed(box(X,Y-1),T) :-
 :- do(T,push_droite),
     fluent(me(X, Y), T),
     not fluent(box(X, Y + 1), T).
+
+:- do(T,push_droite),
+    fluent(me(X, Y), T),
+    wall(X,Y+1).
 
 %effets
 
@@ -445,7 +461,8 @@ removed(box(X, Y + 1), T) :-
 %préconditions
 :- do(T,push_haut_s),
     fluent(me(X, Y), T),
-    not fluent(skeleton(X - 1, Y), T).
+    not fluent(skeleton(X - 1, Y), T),
+    wall(X-1, Y).
 
 %effets
 
@@ -468,7 +485,8 @@ removed(skeleton(X - 1, Y), T) :-
 %préconditions
 :- do(T,push_bas_s),
     fluent(me(X, Y), T),
-    not fluent(skeleton(X + 1, Y), T).
+    not fluent(skeleton(X + 1, Y), T),
+    wall(X+1, Y).
 
 %effets
 fluent(me(X, Y), T + 1) :- 
@@ -490,7 +508,8 @@ removed(skeleton(X + 1, Y), T) :-
 %préconditions
 :- do(T,push_gauche_s),
     fluent(me(X, Y), T),
-    not fluent(skeleton(X , Y-1), T).
+    not fluent(skeleton(X , Y-1), T),
+    wall(X,Y-1).
 
 %effets
 fluent(me(X, Y), T + 1) :- 
@@ -513,7 +532,8 @@ removed(skeleton(X, Y-1), T) :-
 %préconditions
 :- do(T,push_droite_s),
     fluent(me(X, Y), T),
-    not fluent(skeleton(X , Y+1), T).
+    not fluent(skeleton(X , Y+1), T),
+    wall(X,Y+1).  
 
 %effets
 fluent(me(X, Y), T + 1) :- 
@@ -635,8 +655,8 @@ fluent(F, T+1) :-
 	T + 1 <= horizon.
 
 #show do/2.
-%#show fluent/2.
-%#show oddTrap/2.
-%#show evenTrap/2.
-%#show fluent/2.
-%#show achieved/1.
+#defined oddTrap/2.
+#defined evenTrap/2.
+#defined spike/2.
+#defined lock/2.
+#defined key/2.
