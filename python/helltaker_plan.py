@@ -1,6 +1,5 @@
 import sys
 import resource
-import time
 from collections import namedtuple
 from helltaker_utils import grid_from_file, check_plan
 
@@ -366,9 +365,8 @@ def monsuperplanificateur(infos):
     s_0, free, goals, succ, trapped, on_waifu, on_even_trap, on_odd_trap, search_with_parent_heuristic, key_position = factory(
         infos["grid"], infos["max_steps"]
     )
-    print(key_position)
     # s_end, save = search_with_parent(s_0, goals, succ, remove_tail, insert_tail)
-    s_end, save = search_with_parent_heuristic(s_0, goals, succ, remove_head, insert_tail)
+    s_end, save = search_with_parent_heuristic(s_0, goals, succ, remove_tail, insert_tail)
 
     plan = "".join([a for s, a in dict2path(s_end, save) if a])
     return plan
@@ -394,8 +392,7 @@ def main():
 
 
 if __name__ == "__main__":
-    start_time = time.time()
     main()
-    print("--- %s seconds ---" % (time.time() - start_time))
-    # print(resource.getrusage(resource.RUSAGE_SELF))
+    #print("--- %s seconds ---" % (time.time() - start_time))
+    print(resource.getrusage(resource.RUSAGE_SELF))
 

@@ -1,0 +1,27 @@
+Wow, 12061 etats parcourus !
+[OK] gbggggggbbgbbddhhddddbd
+resource.struct_rusage(ru_utime=0.055049999999999995, ru_stime=0.006455, ru_maxrss=12816, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=2031, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=1)
+Wow, 40532 etats parcourus !
+[OK] dhhhhhhdddbddbbbbggb
+resource.struct_rusage(ru_utime=0.09409999999999999, ru_stime=0.0, ru_maxrss=14348, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=2566, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=0)
+Wow, 29337 etats parcourus !
+[OK] gggggbbbbgghbddddddddhhhhhh
+resource.struct_rusage(ru_utime=0.09224199999999999, ru_stime=0.009887, ru_maxrss=15704, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=2876, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=0)
+Wow, 56976 etats parcourus !
+[OK] bbbdbbdddhgghhdbbdddb
+resource.struct_rusage(ru_utime=0.178891, ru_stime=0.009942, ru_maxrss=24180, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=5107, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=1)
+Wow, 17682 etats parcourus !
+[OK] bbbbbddhdddbhghhgghhhh
+resource.struct_rusage(ru_utime=0.070198, ru_stime=0.0, ru_maxrss=14708, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=2568, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=0)
+Wow, 423483 etats parcourus !
+[OK] gbddbbggbggbddddhhggbbbbbdddhhddddbbgggbb
+resource.struct_rusage(ru_utime=1.347831, ru_stime=0.026619, ru_maxrss=88944, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=23539, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=9)
+Wow, 254175 etats parcourus !
+[OK] hhbgghhdbbbggghhhhdddhbdddhhddhh
+resource.struct_rusage(ru_utime=0.8043549999999999, ru_stime=0.016613, ru_maxrss=52712, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=13241, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=29)
+Wow, 7683 etats parcourus !
+[OK] ghhhhhhhhhdd
+resource.struct_rusage(ru_utime=0.038114999999999996, ru_stime=0.0, ru_maxrss=12488, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=1971, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=5)
+Wow, 963193 etats parcourus !
+[OK] dhhddddbddghhhddddbbddhhdggghhhgh
+resource.struct_rusage(ru_utime=3.109503, ru_stime=0.07277399999999999, ru_maxrss=199808, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=53875, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=36)
