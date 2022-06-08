@@ -1,5 +1,6 @@
 import sys
 import resource
+import time
 from collections import namedtuple
 from helltaker_utils import grid_from_file, check_plan
 
@@ -63,6 +64,7 @@ def search_with_parent(s_0, goals, succ, remove, insert):
 
 def manhattan(a, b):
     return sum(abs(val1-val2) for val1, val2 in zip(a,b))
+
 
 
 def monsuperplanificateur(infos):
@@ -139,6 +141,11 @@ def monsuperplanificateur(infos):
             0,
         )
 
+        if len(key) == 0:
+            key_position = [end_positions[0]]
+        else:
+            key_position = key[0]
+
         end_positions = []
         for waifu in targets:
             if (waifu[0] + 1, waifu[1]) not in walls:
@@ -159,6 +166,8 @@ def monsuperplanificateur(infos):
             frozenset(odd_traps),
             max_steps,
         )
+
+
 
         def on_even_trap(position):
             """Retourne vrai si la position est un trap paire"""
@@ -189,7 +198,30 @@ def monsuperplanificateur(infos):
             l = [(do_fn(a, state), a) for a in actions.values()]
             return {x: a for x, a in l if x}
 
-        return s_0, free, goals, succ, trapped, on_waifu, on_even_trap, on_odd_trap
+        def search_with_parent_heuristic(s_0, goals, succ, remove, insert):
+            """Recherche dans un espace d'etat avec sauvegarde des etats parents"""
+            i = 0
+            save = {s_0: None}
+            s_0 = (s_0, manhattan(s_0.pusher, end_positions[0]))
+            l = [s_0]
+            s = s_0
+            while l:
+                l.sort(key=lambda x: x[1])
+                s, l = remove(l)
+                for s_2, a in succ(s[0]).items():
+                    i += 1
+                    if not s_2 in save:
+                        save[s_2] = (s[0], a)
+                        if goals(s_2):
+                            print(f"Wow, {i} etats parcourus !")
+                            return s_2, save
+                        insert((s_2, manhattan(s_2.pusher, end_positions[0])), l)
+
+            print(f"Wow, {i} etats parcourus !")
+            return None, save
+
+
+        return s_0, free, goals, succ, trapped, on_waifu, on_even_trap, on_odd_trap, search_with_parent_heuristic, key_position
 
     def one_step(position, direction):
         """Retourne la position d'une case à partir d'une position et d'une direction"""
@@ -326,10 +358,13 @@ def monsuperplanificateur(infos):
 
         return None
 
-    s_0, free, goals, succ, trapped, on_waifu, on_even_trap, on_odd_trap = factory(
+    s_0, free, goals, succ, trapped, on_waifu, on_even_trap, on_odd_trap, search_with_parent_heuristic, key_position = factory(
         infos["grid"], infos["max_steps"]
     )
-    s_end, save = search_with_parent(s_0, goals, succ, remove_head, insert_tail)
+    print(key_position)
+    #s_end, save = search_with_parent(s_0, goals, succ, remove_head, insert_tail)
+    s_end, save = search_with_parent_heuristic(s_0, goals, succ, remove_head, insert_tail)
+
     plan = "".join([a for s, a in dict2path(s_end, save) if a])
     return plan
 
@@ -354,6 +389,8 @@ def main():
 
 
 if __name__ == "__main__":
-
+    start_time = time.time()
     main()
-    print(resource.getrusage(resource.RUSAGE_SELF))
+    print("--- %s seconds ---" % (time.time() - start_time))
+     #print(resource.getrusage(resource.RUSAGE_SELF))
+
