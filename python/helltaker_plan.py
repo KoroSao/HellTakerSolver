@@ -17,8 +17,8 @@ actions = {d: d for d in "hbdg"}
 
 def insert_tail(s, l):
     """Insert en fin de liste"""
-    l.append(s)
-    return l
+    return l.append(s)
+    
 
 
 def remove_head(l):
@@ -63,7 +63,8 @@ def search_with_parent(s_0, goals, succ, remove, insert):
     return None, save
 
 def manhattan(a, b):
-    return sum(abs(val1-val2) for val1, val2 in zip(a,b))
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+    # return sum(abs(val1-val2) for val1, val2 in zip(a,b))
 
 
 
@@ -141,10 +142,7 @@ def monsuperplanificateur(infos):
             0,
         )
 
-        if len(key) == 0:
-            key_position = [end_positions[0]]
-        else:
-            key_position = key[0]
+        
 
         end_positions = []
         for waifu in targets:
@@ -166,6 +164,10 @@ def monsuperplanificateur(infos):
             frozenset(odd_traps),
             max_steps,
         )
+        if len(key) == 0:
+            key_position = end_positions[0]
+        else:
+            key_position = key[0]
 
 
 
@@ -200,9 +202,11 @@ def monsuperplanificateur(infos):
 
         def search_with_parent_heuristic(s_0, goals, succ, remove, insert):
             """Recherche dans un espace d'etat avec sauvegarde des etats parents"""
+            print(key_position)
+            print(end_positions[0])
             i = 0
             save = {s_0: None}
-            s_0 = (s_0, manhattan(s_0.pusher, end_positions[0]))
+            s_0 = (s_0, manhattan(s_0.pusher, key_position))
             l = [s_0]
             s = s_0
             while l:
@@ -215,7 +219,8 @@ def monsuperplanificateur(infos):
                         if goals(s_2):
                             print(f"Wow, {i} etats parcourus !")
                             return s_2, save
-                        insert((s_2, manhattan(s_2.pusher, end_positions[0])), l)
+                        insert((s_2, 10*((1 - s[0].hasKey) * manhattan(s_2.pusher, key_position)) +  s[0].hasKey*manhattan(s_2.pusher, end_positions[0])) , l)
+                        
 
             print(f"Wow, {i} etats parcourus !")
             return None, save
@@ -362,7 +367,7 @@ def monsuperplanificateur(infos):
         infos["grid"], infos["max_steps"]
     )
     print(key_position)
-    #s_end, save = search_with_parent(s_0, goals, succ, remove_head, insert_tail)
+    # s_end, save = search_with_parent(s_0, goals, succ, remove_tail, insert_tail)
     s_end, save = search_with_parent_heuristic(s_0, goals, succ, remove_head, insert_tail)
 
     plan = "".join([a for s, a in dict2path(s_end, save) if a])
@@ -392,5 +397,5 @@ if __name__ == "__main__":
     start_time = time.time()
     main()
     print("--- %s seconds ---" % (time.time() - start_time))
-     #print(resource.getrusage(resource.RUSAGE_SELF))
+    # print(resource.getrusage(resource.RUSAGE_SELF))
 
