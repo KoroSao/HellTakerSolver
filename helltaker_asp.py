@@ -1,6 +1,6 @@
 import sys
-from typing import List
 import clingo
+import resource
 
 
 action_to_direction = {
@@ -16,6 +16,7 @@ action_to_direction = {
     "gauche": "g",
     "haut": "h",
     "bas": "b",
+    "nop": ''
 }
 
 
@@ -216,3 +217,4 @@ if __name__ == "__main__":
     # print(pb)
     # print(dic["max_steps"])
     print(asp_res_to_table(encoded_problem, dic["max_steps"]))
+    print(resource.getrusage(resource.RUSAGE_SELF))

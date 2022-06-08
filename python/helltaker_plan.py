@@ -43,18 +43,26 @@ def dict2path(s, d):
 
 def search_with_parent(s_0, goals, succ, remove, insert):
     """Recherche dans un espace d'etat avec sauvegarde des etats parents"""
+    i = 0
     l = [s_0]
     save = {s_0: None}
     s = s_0
     while l:
         s, l = remove(l)
         for s_2, a in succ(s).items():
+            i += 1
             if not s_2 in save:
                 save[s_2] = (s, a)
                 if goals(s_2):
+                    print(f"Wow, {i} etats parcourus !")
                     return s_2, save
                 insert(s_2, l)
+
+    print(f"Wow, {i} etats parcourus !")
     return None, save
+
+def manhattan(a, b):
+    return sum(abs(val1-val2) for val1, val2 in zip(a,b))
 
 
 def monsuperplanificateur(infos):
