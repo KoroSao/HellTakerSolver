@@ -10,17 +10,6 @@ action(push_haut;push_bas;push_gauche;push_droite).
 action(nop).
 action(skip).     
 
-%------------------- Traps Alternatifs -------------------
-alternativeTrap(X,Y,T):-
-    safeTrap(X,Y),
-    etape(T),
-    T \ 2 != 0.
-
-alternativeTrap(X,Y,T):-
-    unsafeTrap(X,Y),
-    etape(T),
-    T \ 2 = 0.
-
 %------------------- Buts -------------------
 
 achieved(T):- fluent(F,T), goal(F).
@@ -539,15 +528,17 @@ do(T+1, skip):- fluent(me(X,Y),T), spike(X,Y), do(T,push_bas).
 do(T+1, skip):- fluent(me(X,Y),T), spike(X,Y), do(T,push_gauche).
 do(T+1, skip):- fluent(me(X,Y),T), spike(X,Y), do(T,push_droite).
 
-do(T+1, skip):- fluent(me(X,Y),T), alternativeTrap(X-1,Y,T), do(T,haut).
-do(T+1, skip):- fluent(me(X,Y),T), alternativeTrap(X+1,Y,T), do(T,bas).
-do(T+1, skip):- fluent(me(X,Y),T), alternativeTrap(X,Y-1,T), do(T,gauche).
-do(T+1, skip):- fluent(me(X,Y),T), alternativeTrap(X,Y+1,T), do(T,droite).
+do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X-1,Y,T+1), do(T,haut).
+do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X+1,Y,T+1), do(T,bas).
+do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y-1,T+1), do(T,gauche).
+do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y+1,T+1), do(T,droite).
 
-do(T+1, skip):- fluent(me(X,Y),T), alternativeTrap(X,Y,T), do(T,push_haut).
-do(T+1, skip):- fluent(me(X,Y),T), alternativeTrap(X,Y,T), do(T,push_bas).
-do(T+1, skip):- fluent(me(X,Y),T), alternativeTrap(X,Y,T), do(T,push_gauche).
-do(T+1, skip):- fluent(me(X,Y),T), alternativeTrap(X,Y,T), do(T,push_droite).
+do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y, T+1), do(T,push_haut).
+do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y, T+1), do(T,push_bas).
+do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y, T+1), do(T,push_gauche).
+do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y, T+1), do(T,push_droite).
+
+
 
 
 fluent(me(X, Y), T + 1) :- 
@@ -563,6 +554,9 @@ removed(skeleton(X, Y), T) :-
     fluent(skeleton(X,Y), T),
     spike(X,Y).
 
+removed(skeleton(X, Y), T) :-
+    fluent(skeleton(X,Y), T),
+    fluentTrap(X,Y,T).
 
 
 
@@ -570,6 +564,28 @@ removed(skeleton(X, Y), T) :-
 removed(me(X, Y), T) :- 
     do(T, _),
     fluent(me(X,Y), T).
+
+
+fluentTrap(X,Y,T+2):-
+    not do(T,skip),
+    fluentTrap(X,Y,T),
+    T + 1 < horizon,
+    not removed(fluentTrap(X,Y,T)).
+
+fluentTrap(X,Y,T+1):-
+    do(T,skip),
+    fluentTrap(X,Y,T),
+    T + 1 < horizon,
+    not removed(fluentTrap(X,Y,T)).
+
+removed(fluentTrap(X,Y,T)):-
+    do(T,skip),
+    fluentTrap(X,Y,T),
+    T + 1 < horizon.
+
+
+
+
 
 fluent(F, T+1) :-
 	fluent(F, T),
