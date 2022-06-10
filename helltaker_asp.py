@@ -100,11 +100,11 @@ def map_reader(grid, nb_coups):
                 asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
             if case == "P":
                 asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
-                asp_enc = "\n".join([asp_enc, f"safeTrap({i}, {j})."])
+                asp_enc = "\n".join([asp_enc, f"fluent(trapDown({i}, {j}),0)."])
                 
             if case == "Q":
                 asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
-                asp_enc = "\n".join([asp_enc, f"unsafeTrap({i}, {j})."])
+                asp_enc = "\n".join([asp_enc, f"fluent(trapUp({i}, {j}),0)."])
                 
             else:
                 continue
@@ -201,7 +201,7 @@ def file_to_string(filename: str):
 def creating_pb(initialisation, nb_coups, largeur):
     """ Concate les fichiers ASP et le plan pour créer le problème """
     init = f"#const n={largeur}.\netape(0..{nb_coups-1}).\nnombre(0..n).\n"
-    return '\n'.join([init, initialisation, file_to_string("rules2.asp")])
+    return '\n'.join([init, initialisation, file_to_string("rules.asp")])
 
 
 
