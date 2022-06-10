@@ -16,7 +16,8 @@ action_to_direction = {
     "gauche": "g",
     "haut": "h",
     "bas": "b",
-    "nop": ''
+    "nop": '',
+    "skip": ''
 }
 
 
@@ -91,24 +92,20 @@ def map_reader(grid, nb_coups):
             if case == "S":
                 asp_enc = "\n".join([asp_enc, f"spike({i}, {j})."])
             if case == "T":
-                asp_enc = "\n".join([asp_enc, f"evenTrap({i}, {j})."])
+                asp_enc = "\n".join([asp_enc, f"safeTrap({i}, {j})."])
             if case == "U":
-                asp_enc = "\n".join([asp_enc, f"oddTrap({i}, {j})."])
+                asp_enc = "\n".join([asp_enc, f"unsafeTrap({i}, {j})."])
             if case == "O":
                 asp_enc = "\n".join([asp_enc, f"spike({i}, {j})."])
                 asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
             if case == "P":
                 asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
-                if nb_coups % 2 == 0:
-                    asp_enc = "\n".join([asp_enc, f"oddTrap({i}, {j})."])
-                else:
-                    asp_enc = "\n".join([asp_enc, f"evenTrap({i}, {j})."])
+                asp_enc = "\n".join([asp_enc, f"safeTrap({i}, {j})."])
+                
             if case == "Q":
                 asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
-                if nb_coups % 2 != 0:
-                    asp_enc = "\n".join([asp_enc, f"oddTrap({i}, {j})."])
-                else:
-                    asp_enc = "\n".join([asp_enc, f"evenTrap({i}, {j})."])
+                asp_enc = "\n".join([asp_enc, f"unsafeTrap({i}, {j})."])
+                
             else:
                 continue
 
@@ -204,7 +201,7 @@ def file_to_string(filename: str):
 def creating_pb(initialisation, nb_coups, largeur):
     """ Concate les fichiers ASP et le plan pour créer le problème """
     init = f"#const n={largeur}.\netape(0..{nb_coups-1}).\nnombre(0..n).\n"
-    return '\n'.join([init, initialisation, file_to_string("rules.asp")])
+    return '\n'.join([init, initialisation, file_to_string("rules2.asp")])
 
 
 
@@ -214,7 +211,7 @@ if __name__ == "__main__":
     encoded_problem = creating_pb(
         map_reader(dic["grid"], dic["max_steps"]), dic["max_steps"], dic["n"]
     )
-    # print(pb)
+    print(encoded_problem)
     # print(dic["max_steps"])
     print(asp_res_to_table(encoded_problem, dic["max_steps"]))
     print(resource.getrusage(resource.RUSAGE_SELF))
