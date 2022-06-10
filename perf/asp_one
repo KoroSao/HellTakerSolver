@@ -1,0 +1,18 @@
+['gbbbgggggbgbbddhhddddbd']
+resource.struct_rusage(ru_utime=0.522456, ru_stime=0.036719999999999996, ru_maxrss=45656, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=10901, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=25)
+['hhdhhhhdddbddbbbbggb']
+resource.struct_rusage(ru_utime=1.175258, ru_stime=0.04659, ru_maxrss=68156, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=17398, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=2)
+['gggggbbbbgghbddddddddhhhhhh']
+resource.struct_rusage(ru_utime=1.985056, ru_stime=0.033292999999999996, ru_maxrss=85828, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=23027, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=25)
+['bbbdbbdddhgghhdbbdddb']
+resource.struct_rusage(ru_utime=0.836376, ru_stime=0.020003, ru_maxrss=47644, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=11396, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=2)
+['bbbbdddddbhhhghhgghhh']
+resource.struct_rusage(ru_utime=0.9140269999999999, ru_stime=0.023288, ru_maxrss=47480, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=11389, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=5)
+['gbddbbggbggbdbdddhhbggbbbdddhhddddbbggbb']
+resource.struct_rusage(ru_utime=8.00164, ru_stime=0.089895, ru_maxrss=179888, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=52520, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=25)
+['hhbgghhdbbbggghhhhddhbddddhhddhh']
+resource.struct_rusage(ru_utime=13.161143, ru_stime=0.036628, ru_maxrss=91200, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=24466, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=48)
+['hdhhhhhhhhgg']
+resource.struct_rusage(ru_utime=0.132964, ru_stime=0.016604999999999998, ru_maxrss=23544, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=3619, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=16)
+['dhhddddbddghhhddddbbddhhdggghhhgh']
+resource.struct_rusage(ru_utime=9.263136, ru_stime=0.033294, ru_maxrss=93820, ru_ixrss=0, ru_idrss=0, ru_isrss=0, ru_minflt=25098, ru_majflt=0, ru_nswap=0, ru_inblock=0, ru_oublock=0, ru_msgsnd=0, ru_msgrcv=0, ru_nsignals=0, ru_nvcsw=0, ru_nivcsw=45)

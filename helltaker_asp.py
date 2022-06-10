@@ -29,10 +29,10 @@ def asp_res_to_table(asp_encoded_problem, nb_coups):
 
     # ==========Launching ASP with the right parameter==========
     hor = f"horizon={nb_coups}"
-    ctl = clingo.Control(["-c", hor, "-n0"])
+    ctl = clingo.Control(["-c", hor])
     ctl.add("base", [], asp_encoded_problem)
     ctl.ground([("base", [])])
-    ctl.configuration.solve.models = "0"
+    # ctl.configuration.solve.models = "0"
 
     # ==========Getting all the models found by ASP==========
     models = []
@@ -211,7 +211,7 @@ if __name__ == "__main__":
     encoded_problem = creating_pb(
         map_reader(dic["grid"], dic["max_steps"]), dic["max_steps"], dic["n"]
     )
-    print(encoded_problem)
+    # print(encoded_problem)
     # print(dic["max_steps"])
     print(asp_res_to_table(encoded_problem, dic["max_steps"]))
     print(resource.getrusage(resource.RUSAGE_SELF))
