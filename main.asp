@@ -1,5 +1,5 @@
 #const n=8.
-etape(0..3).
+etape(0..22).
 nombre(0..n).
 
 
@@ -7,43 +7,57 @@ wall(0, 0).
 wall(0, 1).
 wall(0, 2).
 wall(0, 3).
-wall(1, 0).
-wall(1, 1).
-fluent(box(1, 2), 0).
+wall(0, 4).
+wall(0, 5).
+wall(0, 6).
+wall(0, 7).
 wall(1, 3).
-wall(1, 4).
+goal(me(0, 5)).
+goal(me(2, 5)).
+goal(me(1, 4)).
+goal(me(1, 6)).
 wall(1, 5).
 wall(1, 6).
-wall(1, 7).
-wall(2, 0).
-fluent(me(2, 2), 0).
-fluentTrap(2, 3,0).
-fluentTrap(2, 4,1).
-goal(me(1, 6)).
-goal(me(3, 6)).
-goal(me(2, 5)).
-goal(me(2, 7)).
-wall(2, 6).
+wall(2, 1).
+wall(2, 2).
+fluent(lock(2, 4),0).
+fluent(box(2, 5), 0).
 wall(2, 7).
 wall(3, 0).
-wall(3, 1).
-fluent(box(3, 2), 0).
-wall(3, 3).
-wall(3, 4).
-wall(3, 5).
-wall(3, 6).
+fluent(me(3, 1), 0).
+wall(3, 2).
+fluent(trapDown(3, 3),0).
+fluent(box(3, 5), 0).
 wall(3, 7).
 wall(4, 0).
-wall(4, 1).
 wall(4, 2).
-wall(4, 3).
-wall(4, 4).
-wall(4, 5).
-wall(4, 6).
+fluent(trapDown(4, 4),0).
+fluent(trapDown(4, 6),0).
 wall(4, 7).
+wall(5, 0).
+fluent(skeleton(5, 1), 0).
+wall(5, 2).
+fluent(box(5, 3), 0).
+fluent(box(5, 4), 0).
+fluent(box(5, 5), 0).
+fluent(box(5, 6), 0).
+wall(5, 7).
+wall(6, 0).
+fluent(trapDown(6, 1),0).
+fluent(trapDown(6, 3),0).
+fluent(trapDown(6, 6),0).
+wall(6, 7).
+wall(7, 1).
+wall(7, 2).
+wall(7, 3).
+wall(7, 4).
+wall(7, 5).
+fluent(key(7, 6),0).
+wall(7, 7).
+wall(8, 6).
 
 
-wall(4, 7).fluent(has_key(0), 0).
+fluent(has_key(0), 0).
 %------------------- ACTIONS -------------------
 %------------------- Niveau 1 -------------------
 %------------------- Se deplacer -------------------
@@ -573,17 +587,17 @@ do(T+1, skip):- fluent(me(X,Y),T), spike(X,Y), do(T,push_bas).
 do(T+1, skip):- fluent(me(X,Y),T), spike(X,Y), do(T,push_gauche).
 do(T+1, skip):- fluent(me(X,Y),T), spike(X,Y), do(T,push_droite).
 
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X-1,Y,T), do(T,haut).
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X+1,Y,T), do(T,bas).
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y-1,T), do(T,gauche).
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y+1,T), do(T,droite).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X-1,Y),T+1), do(T,haut).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X+1,Y),T+1), do(T,bas).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X,Y-1),T+1), do(T,gauche).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X,Y+1),T+1), do(T,droite).
 
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y, T), do(T,push_haut).
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y, T), do(T,push_bas).
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y, T), do(T,push_gauche).
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y, T), do(T,push_droite).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X,Y), T+1), do(T,push_haut).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X,Y), T+1), do(T,push_bas).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X,Y), T+1), do(T,push_gauche).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X,Y), T+1), do(T,push_droite).
 
-
+:- do(T, skip), T < 1.
 
 
 fluent(me(X, Y), T + 1) :- 
@@ -599,6 +613,9 @@ removed(skeleton(X, Y), T) :-
     fluent(skeleton(X,Y), T),
     spike(X,Y).
 
+removed(skeleton(X, Y), T) :-
+    fluent(skeleton(X,Y), T),
+    fluent(trapUp(X,Y),T+1).
 
 
 
@@ -607,15 +624,23 @@ removed(me(X, Y), T) :-
     do(T, _),
     fluent(me(X,Y), T).
 
-fluentTrap(X,Y,T+1):-
-    do(T, skip),
-    fluentTrap(X,Y,T),
-    T < horizon.
+removed(trapUp(X,Y), T):-
+    fluent(trapDown(X,Y),T+1).
 
-fluentTrap(X,Y,T+2):-
-    not do(T, skip),
-    fluentTrap(X,Y,T),
-    T < horizon.
+removed(trapDown(X,Y), T):-
+    fluent(trapUp(X,Y),T+1).
+
+
+fluent(trapDown(X,Y),T+1):-
+    not do(T,skip),
+    fluent(trapUp(X,Y),T),
+    T + 1 <= horizon.
+
+fluent(trapUp(X,Y),T+1):-
+    not do(T,skip),
+    fluent(trapDown(X,Y),T),
+    T + 1 <= horizon.
+
 
 fluent(F, T+1) :-
 	fluent(F, T),
@@ -629,7 +654,6 @@ fluent(F, T+1) :-
 
 #show do/2.
 #show fluent/2.
-#show fluentTrap/3.
 
 #defined oddTrap/2.
 #defined evenTrap/2.
@@ -639,3 +663,4 @@ fluent(F, T+1) :-
 #defined alternativeTrap/3.
 #defined safeTrap/2.
 #defined unsafeTrap/2.
+
