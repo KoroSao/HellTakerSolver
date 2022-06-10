@@ -599,6 +599,8 @@ do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X,Y), T+1), do(T,push_droite).
 
 :- do(T, skip), T < 1.
 
+:- do(T, skip), do(T-1, skip).
+:- do(T, skip), not fluent(trapUp(X, Y), T), fluent(me(X, Y), T).
 
 fluent(me(X, Y), T + 1) :- 
     do(T,skip), 
@@ -653,14 +655,14 @@ fluent(F, T+1) :-
 	T + 1 <= horizon.
 
 #show do/2.
-#show fluent/2.
+%#show fluent/2.
 
-#defined oddTrap/2.
-#defined evenTrap/2.
-#defined spike/2.
-#defined lock/2.
-#defined key/2.
-#defined alternativeTrap/3.
-#defined safeTrap/2.
-#defined unsafeTrap/2.
+%#defined oddTrap/2.
+%#defined evenTrap/2.
+%#defined spike/2.
+%#defined lock/2.
+%#defined key/2.
+%#defined alternativeTrap/3.
+%#defined safeTrap/2.
+%#defined unsafeTrap/2.
 
