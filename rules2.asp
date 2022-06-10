@@ -528,17 +528,17 @@ do(T+1, skip):- fluent(me(X,Y),T), spike(X,Y), do(T,push_bas).
 do(T+1, skip):- fluent(me(X,Y),T), spike(X,Y), do(T,push_gauche).
 do(T+1, skip):- fluent(me(X,Y),T), spike(X,Y), do(T,push_droite).
 
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X-1,Y,T+1), do(T,haut).
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X+1,Y,T+1), do(T,bas).
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y-1,T+1), do(T,gauche).
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y+1,T+1), do(T,droite).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X-1,Y),T+1), do(T,haut).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X+1,Y),T+1), do(T,bas).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X,Y-1),T+1), do(T,gauche).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X,Y+1),T+1), do(T,droite).
 
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y, T+1), do(T,push_haut).
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y, T+1), do(T,push_bas).
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y, T+1), do(T,push_gauche).
-do(T+1, skip):- fluent(me(X,Y),T), fluentTrap(X,Y, T+1), do(T,push_droite).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X,Y), T+1), do(T,push_haut).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X,Y), T+1), do(T,push_bas).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X,Y), T+1), do(T,push_gauche).
+do(T+1, skip):- fluent(me(X,Y),T), fluent(trapUp(X,Y), T+1), do(T,push_droite).
 
-
+:- do(T, skip), T < 1.
 
 
 fluent(me(X, Y), T + 1) :- 
@@ -556,7 +556,7 @@ removed(skeleton(X, Y), T) :-
 
 removed(skeleton(X, Y), T) :-
     fluent(skeleton(X,Y), T),
-    fluentTrap(X,Y,T).
+    fluent(trapUp(X,Y),T+1).
 
 
 
@@ -565,26 +565,22 @@ removed(me(X, Y), T) :-
     do(T, _),
     fluent(me(X,Y), T).
 
+removed(trapUp(X,Y), T):-
+    fluent(trapDown(X,Y),T+1).
 
-fluentTrap(X,Y,T+2):-
+removed(trapDown(X,Y), T):-
+    fluent(trapUp(X,Y),T+1).
+
+
+fluent(trapDown(X,Y),T+1):-
     not do(T,skip),
-    fluentTrap(X,Y,T),
-    T + 1 < horizon,
-    not removed(fluentTrap(X,Y,T)).
+    fluent(trapUp(X,Y),T),
+    T + 1 <= horizon.
 
-fluentTrap(X,Y,T+1):-
-    do(T,skip),
-    fluentTrap(X,Y,T),
-    T + 1 < horizon,
-    not removed(fluentTrap(X,Y,T)).
-
-removed(fluentTrap(X,Y,T)):-
-    do(T,skip),
-    fluentTrap(X,Y,T),
-    T + 1 < horizon.
-
-
-
+fluent(trapUp(X,Y),T+1):-
+    not do(T,skip),
+    fluent(trapDown(X,Y),T),
+    T + 1 <= horizon.
 
 
 fluent(F, T+1) :-

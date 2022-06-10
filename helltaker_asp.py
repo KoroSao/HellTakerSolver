@@ -92,9 +92,9 @@ def map_reader(grid, nb_coups):
             if case == "S":
                 asp_enc = "\n".join([asp_enc, f"spike({i}, {j})."])
             if case == "T":
-                asp_enc = "\n".join([asp_enc, f"fluentTrap({i}, {j},1)."])
+                asp_enc = "\n".join([asp_enc, f"fluent(trapDown({i}, {j}),0)."])
             if case == "U":
-                asp_enc = "\n".join([asp_enc, f"fluentTrap({i}, {j}, 0)."])
+                asp_enc = "\n".join([asp_enc, f"fluent(trapUp({i}, {j}),0)."])
             if case == "O":
                 asp_enc = "\n".join([asp_enc, f"spike({i}, {j})."])
                 asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
