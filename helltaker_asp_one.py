@@ -2,6 +2,7 @@ import sys
 import clingo
 
 
+
 action_to_direction = {
     "push_droite": "d",
     "push_gauche": "g",
@@ -11,8 +12,8 @@ action_to_direction = {
     "gauche": "g",
     "haut": "h",
     "bas": "b",
-    "nop": "",
-    "skip": ""
+    "nop": '',
+    "skip": ''
 }
 
 
@@ -24,10 +25,9 @@ def asp_res_to_table(asp_encoded_problem, nb_coups):
 
     # ==========Launching ASP with the right parameter==========
     hor = f"horizon={nb_coups}"
-    ctl = clingo.Control(["-c", hor, "-n0"])
+    ctl = clingo.Control(["-c", hor])
     ctl.add("base", [], asp_encoded_problem)
     ctl.ground([("base", [])])
-    ctl.configuration.solve.models = "0"
 
     # ==========Getting all the models found by ASP==========
     models = []
@@ -96,11 +96,9 @@ def map_reader(grid, nb_coups):
             if case == "P":
                 asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
                 asp_enc = "\n".join([asp_enc, f"fluent(trapDown({i}, {j}),0)."])
-
             if case == "Q":
                 asp_enc = "\n".join([asp_enc, f"fluent(box({i}, {j}), 0)."])
                 asp_enc = "\n".join([asp_enc, f"fluent(trapUp({i}, {j}),0)."])
-
             else:
                 continue
 
@@ -108,12 +106,11 @@ def map_reader(grid, nb_coups):
 
 
 def complete(m, n):
-    """Complete the map with spaces"""
+    """ Complete the map with spaces """
     for l in m:
         for _ in range(len(l), n):
             l.append(" ")
     return m
-
 
 def grid_from_file(filename):
     """
@@ -178,7 +175,7 @@ def check_plan(plan: str):
 
 
 def test():
-    """Test la présence d'un argument de la ligne de commande"""
+    """ Test la présence d'un argument de la ligne de commande """
     if len(sys.argv) != 2:
         sys.exit(-1)
 
@@ -189,15 +186,16 @@ def test():
 
 # file to string
 def file_to_string(filename: str):
-    """Convertit un fichier en une chaîne de caractères"""
+    """ Convertit un fichier en une chaîne de caractères """
     with open(filename, "r", encoding="utf-8") as f:
         return f.read()
 
 
 def creating_pb(initialisation, nb_coups, largeur):
-    """Concate les fichiers ASP et le plan pour créer le problème"""
+    """ Concate les fichiers ASP et le plan pour créer le problème """
     init = f"#const n={largeur}.\netape(0..{nb_coups-1}).\nnombre(0..n).\n"
-    return "\n".join([init, initialisation, file_to_string("rules.asp")])
+    return '\n'.join([init, initialisation, file_to_string("rules.asp")])
+
 
 
 if __name__ == "__main__":
@@ -205,4 +203,4 @@ if __name__ == "__main__":
     ENCODED_PROBLEM = creating_pb(
         map_reader(dic["grid"], dic["max_steps"]), dic["max_steps"], dic["n"]
     )
-    print(asp_res_to_table(ENCODED_PROBLEM, dic["max_steps"]))
+    print(asp_res_to_table(ENCODED_PROBLEM, dic["max_steps"])[0] + "\n")

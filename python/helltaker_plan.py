@@ -1,5 +1,4 @@
 import sys
-import resource
 from collections import namedtuple
 from helltaker_utils import grid_from_file, check_plan
 
@@ -17,7 +16,6 @@ actions = {d: d for d in "hbdg"}
 def insert_tail(s, l):
     """Insert en fin de liste"""
     return l.append(s)
-    
 
 
 def remove_head(l):
@@ -54,17 +52,15 @@ def search_with_parent(s_0, goals, succ, remove, insert):
             if not s_2 in save:
                 save[s_2] = (s, a)
                 if goals(s_2):
-                    print(f"Wow, {i} etats parcourus !")
                     return s_2, save
                 insert(s_2, l)
 
-    print(f"Wow, {i} etats parcourus !")
     return None, save
+
 
 def manhattan(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
     # return sum(abs(val1-val2) for val1, val2 in zip(a,b))
-
 
 
 def monsuperplanificateur(infos):
@@ -141,8 +137,6 @@ def monsuperplanificateur(infos):
             0,
         )
 
-        
-
         end_positions = []
         for waifu in targets:
             if (waifu[0] + 1, waifu[1]) not in walls:
@@ -167,8 +161,6 @@ def monsuperplanificateur(infos):
             key_position = end_positions[0]
         else:
             key_position = key[0]
-
-
 
         def on_even_trap(position):
             """Retourne vrai si la position est un trap paire"""
@@ -201,8 +193,6 @@ def monsuperplanificateur(infos):
 
         def search_with_parent_heuristic(s_0, goals, succ, remove, insert):
             """Recherche dans un espace d'etat avec sauvegarde des etats parents"""
-            print(key_position)
-            print(end_positions[0])
             i = 0
             save = {s_0: None}
             s_0 = (s_0, manhattan(s_0.pusher, key_position))
@@ -216,16 +206,34 @@ def monsuperplanificateur(infos):
                     if not s_2 in save:
                         save[s_2] = (s[0], a)
                         if goals(s_2):
-                            print(f"Wow, {i} etats parcourus !")
                             return s_2, save
-                        insert((s_2, 10*((1 - s[0].hasKey) * manhattan(s_2.pusher, key_position)) +  s[0].hasKey*manhattan(s_2.pusher, end_positions[0])) , l)
-                        
+                        insert(
+                            (
+                                s_2,
+                                10
+                                * (
+                                    (1 - s[0].hasKey)
+                                    * manhattan(s_2.pusher, key_position)
+                                )
+                                + s[0].hasKey * manhattan(s_2.pusher, end_positions[0]),
+                            ),
+                            l,
+                        )
 
-            print(f"Wow, {i} etats parcourus !")
             return None, save
 
-
-        return s_0, free, goals, succ, trapped, on_waifu, on_even_trap, on_odd_trap, search_with_parent_heuristic, key_position
+        return (
+            s_0,
+            free,
+            goals,
+            succ,
+            trapped,
+            on_waifu,
+            on_even_trap,
+            on_odd_trap,
+            search_with_parent_heuristic,
+            key_position,
+        )
 
     def one_step(position, direction):
         """Retourne la position d'une case à partir d'une position et d'une direction"""
@@ -362,11 +370,21 @@ def monsuperplanificateur(infos):
 
         return None
 
-    s_0, free, goals, succ, trapped, on_waifu, on_even_trap, on_odd_trap, search_with_parent_heuristic, key_position = factory(
-        infos["grid"], infos["max_steps"]
+    (
+        s_0,
+        free,
+        goals,
+        succ,
+        trapped,
+        on_waifu,
+        on_even_trap,
+        on_odd_trap,
+        search_with_parent_heuristic,
+        key_position,
+    ) = factory(infos["grid"], infos["max_steps"])
+    s_end, save = search_with_parent_heuristic(
+        s_0, goals, succ, remove_head, insert_tail
     )
-    # s_end, save = search_with_parent(s_0, goals, succ, remove_tail, insert_tail)
-    s_end, save = search_with_parent_heuristic(s_0, goals, succ, remove_tail, insert_tail)
 
     plan = "".join([a for s, a in dict2path(s_end, save) if a])
     return plan
@@ -385,7 +403,7 @@ def main():
 
     # affichage du résultat
     if check_plan(plan):
-        print("[OK]", plan)
+        print(plan + "\n")
     else:
         print("[Err]", plan, file=sys.stderr)
         sys.exit(2)
@@ -393,6 +411,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    #print("--- %s seconds ---" % (time.time() - start_time))
-    print(resource.getrusage(resource.RUSAGE_SELF))
-
